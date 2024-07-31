@@ -11,15 +11,14 @@ import {
   FolderPlusIcon,
   MousePointerClickIcon,
   TrashIcon,
-  XIcon,
 } from "lucide-react-native"
 import { FC, useRef } from "react"
-import { Pressable, View } from "react-native"
+import { Pressable } from "react-native"
 import Animated, { FadeIn } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
+import BottomSheetOptionsList from "./BottomSheetOptionsList"
 import ImageSaver from "./ImageSaver"
-import { Text } from "./StyledComponents"
 
 interface ImageProps {
   piece: Piece
@@ -61,15 +60,12 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
       />
       <BottomSheetModal
         ref={bottomSheetRef}
-        snapPoints={["34%"]}
-        bottomInset={insets.bottom}
-        handleComponent={null}
-        detached
+        enableDynamicSizing
         style={{
-          marginHorizontal: 20,
           borderRadius: 24,
           overflow: "hidden",
         }}
+        handleIndicatorStyle={{ backgroundColor: "#D0D0D0" }}
         backdropComponent={(e) => {
           return (
             <BottomSheetBackdrop
@@ -84,40 +80,64 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
         }}
         backgroundStyle={{ backgroundColor: "#191919" }}
       >
-        <BottomSheetView className="">
-          <View className="flex flex-row items-center justify-between border-b border-muted px-7 py-5">
-            <Text family="fancy" className="text-2xl">
-              Quick Actions
-            </Text>
-            <Pressable onPress={() => bottomSheetRef.current?.dismiss()}>
-              <XIcon color="#D0D0D0" />
-            </Pressable>
-          </View>
-          <View className="">
-            <Pressable className="flex flex-row items-center justify-between px-7 py-4">
-              <Text className="text-lg">Select Element</Text>
-              <MousePointerClickIcon color="#D0D0D0" />
-            </Pressable>
-            <Pressable className="flex flex-row items-center justify-between border-y border-muted px-7 py-4">
-              <Text className="text-lg">Move Element</Text>
-              <FolderPlusIcon color="#D0D0D0" />
-            </Pressable>
-            <ImageSaver
-              {...piece}
-              close={() => bottomSheetRef.current?.dismiss()}
-            />
-            <Pressable
-              onPress={async () => {
-                await deletePiece(piece.id)
-                mutate("pieces")
-                bottomSheetRef.current?.dismiss()
-              }}
-              className="flex flex-row items-center justify-between px-7 py-4"
-            >
-              <Text className="text-lg">Delete Element</Text>
-              <TrashIcon color="#D0D0D0" />
-            </Pressable>
-          </View>
+        <BottomSheetView
+          className="px-5 pt-3"
+          style={{ paddingBottom: insets.bottom }}
+        >
+          <BottomSheetOptionsList
+            roundBottom={false}
+            items={[
+              {
+                icon: <MousePointerClickIcon color="#D0D0D0" size={20} />,
+                text: "Select Element",
+                onPress: () => {},
+              },
+              {
+                icon: <FolderPlusIcon color="#D0D0D0" size={20} />,
+                text: "Move Element",
+                onPress: () => {},
+              },
+              {
+                icon: <TrashIcon color="#D0D0D0" size={20} />,
+                text: "Delete Element",
+                onPress: async () => {
+                  await deletePiece(piece.id)
+                  mutate("pieces")
+                  bottomSheetRef.current?.dismiss()
+                },
+              },
+            ]}
+            otherItems={[
+              <ImageSaver
+                {...piece}
+                close={() => bottomSheetRef.current?.dismiss()}
+              />,
+            ]}
+          />
+
+          {/* <Pressable className="flex flex-row items-center justify-between px-7 py-4"> */}
+          {/*   <Text className="text-lg">Select Element</Text> */}
+          {/*   <MousePointerClickIcon color="#D0D0D0" /> */}
+          {/* </Pressable> */}
+          {/* <Pressable className="flex flex-row items-center justify-between border-y border-muted px-7 py-4"> */}
+          {/*   <Text className="text-lg">Move Element</Text> */}
+          {/*   <FolderPlusIcon color="#D0D0D0" /> */}
+          {/* </Pressable> */}
+          {/* <ImageSaver */}
+          {/*   {...piece} */}
+          {/*   close={() => bottomSheetRef.current?.dismiss()} */}
+          {/* /> */}
+          {/* <Pressable */}
+          {/*   onPress={async () => { */}
+          {/*     await deletePiece(piece.id) */}
+          {/*     mutate("pieces") */}
+          {/*     bottomSheetRef.current?.dismiss() */}
+          {/*   }} */}
+          {/*   className="flex flex-row items-center justify-between px-7 py-4" */}
+          {/* > */}
+          {/*   <Text className="text-lg">Delete Element</Text> */}
+          {/*   <TrashIcon color="#D0D0D0" /> */}
+          {/* </Pressable> */}
         </BottomSheetView>
       </BottomSheetModal>
     </Pressable>

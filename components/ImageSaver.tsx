@@ -30,7 +30,7 @@ const ImageSaver: FC<ImageSaverProps> = ({ close, ...props }) => {
   }
   return (
     <Pressable
-      className="flex flex-row items-center justify-between border-b border-muted px-7 py-4"
+      className="flex flex-row items-center justify-between rounded-b-2xl border-t border-cosmosMutedText/10 bg-muted px-7 py-4"
       onPress={async () => {
         const res = await getPermissions()
 

@@ -76,7 +76,10 @@ function RootLayoutNav() {
             options={{
               headerLeft: () => {
                 return (
-                  <TouchableOpacity onPress={() => router.back()}>
+                  <TouchableOpacity
+                    onPress={() => router.back()}
+                    onLongPress={() => router.dismissAll()}
+                  >
                     <ArrowLeftIcon />
                   </TouchableOpacity>
                 )
