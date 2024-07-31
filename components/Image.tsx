@@ -89,22 +89,13 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
             items={[
               {
                 icon: <MousePointerClickIcon color="#D0D0D0" size={20} />,
-                text: "Select Element",
+                text: "Select Photo",
                 onPress: () => {},
               },
               {
                 icon: <FolderPlusIcon color="#D0D0D0" size={20} />,
-                text: "Move Element",
+                text: "Move Photo",
                 onPress: () => {},
-              },
-              {
-                icon: <TrashIcon color="#D0D0D0" size={20} />,
-                text: "Delete Element",
-                onPress: async () => {
-                  await deletePiece(piece.id)
-                  mutate("pieces")
-                  bottomSheetRef.current?.dismiss()
-                },
               },
             ]}
             otherItems={[
@@ -113,31 +104,19 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
                 close={() => bottomSheetRef.current?.dismiss()}
               />,
             ]}
+            destructiveItems={[
+              {
+                icon: <TrashIcon color="#FC2A2C" size={20} />,
+                text: "Delete Photo",
+                onPress: async () => {
+                  console.log("pressed")
+                  await deletePiece(piece.id)
+                  mutate("pieces")
+                  bottomSheetRef.current?.dismiss()
+                },
+              },
+            ]}
           />
-
-          {/* <Pressable className="flex flex-row items-center justify-between px-7 py-4"> */}
-          {/*   <Text className="text-lg">Select Element</Text> */}
-          {/*   <MousePointerClickIcon color="#D0D0D0" /> */}
-          {/* </Pressable> */}
-          {/* <Pressable className="flex flex-row items-center justify-between border-y border-muted px-7 py-4"> */}
-          {/*   <Text className="text-lg">Move Element</Text> */}
-          {/*   <FolderPlusIcon color="#D0D0D0" /> */}
-          {/* </Pressable> */}
-          {/* <ImageSaver */}
-          {/*   {...piece} */}
-          {/*   close={() => bottomSheetRef.current?.dismiss()} */}
-          {/* /> */}
-          {/* <Pressable */}
-          {/*   onPress={async () => { */}
-          {/*     await deletePiece(piece.id) */}
-          {/*     mutate("pieces") */}
-          {/*     bottomSheetRef.current?.dismiss() */}
-          {/*   }} */}
-          {/*   className="flex flex-row items-center justify-between px-7 py-4" */}
-          {/* > */}
-          {/*   <Text className="text-lg">Delete Element</Text> */}
-          {/*   <TrashIcon color="#D0D0D0" /> */}
-          {/* </Pressable> */}
         </BottomSheetView>
       </BottomSheetModal>
     </Pressable>

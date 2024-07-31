@@ -11,25 +11,27 @@ export type BottomSheetOptionItem = {
 
 interface BottomSheetOptionsListProps {
   items: BottomSheetOptionItem[]
+  destructiveItems?: BottomSheetOptionItem[]
   otherItems?: JSX.Element[]
   roundBottom?: boolean
 }
 
 const BottomSheetOptionsList: FC<BottomSheetOptionsListProps> = ({
   items,
+  destructiveItems,
   otherItems,
-  roundBottom = true,
 }) => {
   return (
     <View className="flex flex-col">
       {items.map((item, index) => {
         return (
           <Pressable
+            onPress={item.onPress}
             key={index}
             className={cn(
               "flex flex-row items-center justify-between bg-muted px-7 py-4",
               index === 0 && "rounded-t-2xl border-b border-cosmosMutedText/10",
-              index === items.length - 1 && roundBottom && "rounded-b-2xl",
+              index === items.length - 1 && "rounded-b-2xl",
               index !== 0 &&
                 index !== items.length - 1 &&
                 "border-b border-cosmosMutedText/10"
@@ -40,10 +42,41 @@ const BottomSheetOptionsList: FC<BottomSheetOptionsListProps> = ({
           </Pressable>
         )
       })}
-      {otherItems &&
-        otherItems.map((item, index) => {
-          return <View key={index}>{item}</View>
-        })}
+      <View className="mt-5">
+        {otherItems &&
+          otherItems.map((item, index) => {
+            return <View key={index}>{item}</View>
+          })}
+      </View>
+      <View className="mt-5">
+        {destructiveItems &&
+          destructiveItems.map((item, index) => {
+            return (
+              <Pressable
+                onPress={item.onPress}
+                key={index}
+                className={cn(
+                  "flex flex-row items-center justify-between bg-destructive px-7 py-4",
+                  destructiveItems.length > 1
+                    ? index === 0 &&
+                        "rounded-t-2xl border-b border-cosmosMutedText/10"
+                    : "rounded-t-2xl",
+                  index === items.length - 1 && "rounded-b-2xl",
+                  destructiveItems.length > 1
+                    ? index !== 0 &&
+                        index !== items.length - 1 &&
+                        "border-b border-cosmosMutedText/10"
+                    : "rounded-b-2xl"
+                )}
+              >
+                <Text className="text-lg text-destructiveText">
+                  {item.text}
+                </Text>
+                {item.icon}
+              </Pressable>
+            )
+          })}
+      </View>
     </View>
   )
 }
