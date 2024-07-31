@@ -19,6 +19,9 @@ import { Pressable, TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
 
+const blurhash =
+  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj["
+
 export default function PhotoTaker() {
   const insets = useSafeAreaInsets()
   const { mutate } = useSWRConfig()
@@ -65,7 +68,7 @@ export default function PhotoTaker() {
         style={{ marginHorizontal: 10, overflow: "hidden", borderRadius: 24 }}
         handleComponent={null}
       >
-        <BottomSheetView style={{ flex: 1 }}>
+        <BottomSheetView style={{ flex: 1 }} className="bg-bgColor">
           {image ? (
             <View
               className="relative"
@@ -76,6 +79,7 @@ export default function PhotoTaker() {
             >
               <Image
                 source={{ uri: image.uri }}
+                placeholder={blurhash}
                 contentFit="cover"
                 style={{
                   width: "100%",
