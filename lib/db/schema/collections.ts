@@ -3,18 +3,19 @@ import { sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 import { z } from "zod"
 
+import { type getCollections } from "@/lib/api/collections/queries"
+
 import "react-native-get-random-values"
 
-import { type getCollections } from "@/lib/api/collections/queries"
-import { v4 as uuid } from "uuid"
-
 import { timestamps } from "@/lib/utils"
+import { v4 as uuid } from "uuid"
 
 export const collections = sqliteTable("collections", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => uuid()),
-  name: text("name").notNull(),
+  coverImage: text("cover_image"),
+  title: text("title").notNull(),
 
   createdAt: text("created_at")
     .notNull()

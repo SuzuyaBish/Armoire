@@ -1,12 +1,10 @@
-import { deleteFile } from "@/lib/api/files/mutations"
-import { FileWithThumbnail } from "@/lib/db/schema/files"
-import { capitalize } from "@/lib/utils"
+import { deletePiece } from "@/lib/api/pieces/mutations"
+import { Piece } from "@/lib/db/schema/pieces"
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet"
-import { BlurView } from "expo-blur"
 import { ImpactFeedbackStyle, impactAsync } from "expo-haptics"
 import { useRouter } from "expo-router"
 import {
@@ -23,7 +21,7 @@ import { useSWRConfig } from "swr"
 import { Text } from "./StyledComponents"
 
 interface ImageProps {
-  piece: FileWithThumbnail
+  piece: Piece
   index: number
   length: number
 }
@@ -60,17 +58,6 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
           width: "100%",
         }}
       />
-      <BlurView
-        className="absolute rounded-full px-2 py-1"
-        tint="light"
-        style={{
-          bottom: 14,
-          right: 14,
-          overflow: "hidden",
-        }}
-      >
-        <Text className="text-xs">{capitalize(piece.fileType)}</Text>
-      </BlurView>
       <BottomSheetModal
         ref={bottomSheetRef}
         snapPoints={["27.5%"]}
@@ -116,7 +103,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
             </Pressable>
             <Pressable
               onPress={async () => {
-                await deleteFile(piece.id)
+                await deletePiece(piece.id)
                 mutate("pieces")
                 bottomSheetRef.current?.dismiss()
               }}

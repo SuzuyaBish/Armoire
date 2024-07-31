@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "13db5bee-ca98-4ece-8ae0-16fa481c6924",
+  "id": "99f8fab9-b873-43f4-bee3-eff6a0e08900",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "collections": {
@@ -14,8 +14,15 @@
           "notNull": true,
           "autoincrement": false
         },
-        "name": {
-          "name": "name",
+        "cover_image": {
+          "name": "cover_image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -43,8 +50,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "files": {
-      "name": "files",
+    "pieces": {
+      "name": "pieces",
       "columns": {
         "id": {
           "name": "id",
@@ -53,22 +60,22 @@
           "notNull": true,
           "autoincrement": false
         },
-        "file_name": {
-          "name": "file_name",
+        "title": {
+          "name": "title",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "file_path": {
           "name": "file_path",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "file_type": {
-          "name": "file_type",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -86,6 +93,20 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "archived": {
+          "name": "archived",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "created_at": {
@@ -107,9 +128,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "files_collection_id_collections_id_fk": {
-          "name": "files_collection_id_collections_id_fk",
-          "tableFrom": "files",
+        "pieces_collection_id_collections_id_fk": {
+          "name": "pieces_collection_id_collections_id_fk",
+          "tableFrom": "pieces",
           "tableTo": "collections",
           "columnsFrom": [
             "collection_id"
@@ -124,8 +145,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "settings": {
-      "name": "settings",
+    "tags": {
+      "name": "tags",
       "columns": {
         "id": {
           "name": "id",
@@ -134,13 +155,12 @@
           "notNull": true,
           "autoincrement": false
         },
-        "onboarding_seen": {
-          "name": "onboarding_seen",
-          "type": "integer",
+        "title": {
+          "name": "title",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": false
+          "autoincrement": false
         },
         "created_at": {
           "name": "created_at",

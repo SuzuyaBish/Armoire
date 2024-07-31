@@ -1,7 +1,7 @@
 import { Text } from "@/components/StyledComponents"
 import { windowWidth } from "@/constants/window"
-import { createFilesPath } from "@/lib/api/files/functions"
-import { createFile } from "@/lib/api/files/mutations"
+import { createPiecesPath } from "@/lib/api/pieces/functions"
+import { createPiece } from "@/lib/api/pieces/mutations"
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -31,52 +31,38 @@ export default function TabLayout() {
 
   const pickMedia = async () => {
     let result = await launchImageLibraryAsync({
-      mediaTypes: MediaTypeOptions.All,
+      mediaTypes: MediaTypeOptions.Images,
       quality: 1,
       allowsMultipleSelection: true,
     })
 
     if (!result.canceled) {
-      const path = await createFilesPath()
+      const path = await createPiecesPath()
 
       for (let i = 0; i < result.assets.length; i++) {
         const fileDetails = result.assets[i]
 
-        if (fileDetails.type === "image") {
-          await DefaultImage.getSize(
-            result.assets[i].uri,
-            async (width, height) => {
-              const aspectRatio = width / height
+        await DefaultImage.getSize(
+          result.assets[i].uri,
+          async (width, height) => {
+            const aspectRatio = width / height
 
-              await createFile(
-                {
-                  filePath: path.uri + fileDetails.uri.split("/").pop(),
-                  aspect_ratio: aspectRatio,
-                  fileType: fileDetails.type!,
-                  fileName: fileDetails.uri.split("/").pop()!,
-                  collectionId: "",
-                },
-                fileDetails.uri
-              )
+            await createPiece(
+              {
+                filePath: path.uri + fileDetails.uri.split("/").pop(),
+                aspect_ratio: aspectRatio,
+                age: new Date(),
+                tags: JSON.stringify([]),
+                title: fileDetails.uri.split("/").pop()!,
+                archived: false,
+                collectionId: "",
+              },
+              fileDetails.uri
+            )
 
-              mutate("pieces")
-            }
-          )
-        } else {
-          console.log("Here", result.assets)
-          await createFile(
-            {
-              filePath: path.uri + fileDetails.uri.split("/").pop(),
-              aspect_ratio: 1,
-              fileType: fileDetails.type!,
-              fileName: fileDetails.uri.split("/").pop()!,
-              collectionId: "",
-            },
-            fileDetails.uri
-          )
-
-          mutate("pieces")
-        }
+            mutate("pieces")
+          }
+        )
       }
     }
   }

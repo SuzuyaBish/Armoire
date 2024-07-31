@@ -1,7 +1,6 @@
 import { ParentView } from "@/components/StyledComponents"
 import ImageViewer from "@/components/viewer/ImageViewer"
-import VideoViewer from "@/components/viewer/VideoViewer"
-import { getFileById } from "@/lib/api/files/queries"
+import { getPieceById } from "@/lib/api/pieces/queries"
 import { format } from "date-fns"
 import { useLocalSearchParams, useNavigation } from "expo-router"
 import React from "react"
@@ -14,10 +13,10 @@ type ViewerPageProps = {
 export default function ViewerPage() {
   const { id } = useLocalSearchParams() as ViewerPageProps
   const fetcher = async () => {
-    const data = await getFileById(id)
+    const data = await getPieceById(id)
 
     navigation.setOptions({
-      title: format(data?.file?.createdAt!, "dd MMMM yyyy"),
+      title: format(data?.piece?.createdAt!, "dd MMMM yyyy"),
     })
 
     return data
@@ -27,15 +26,7 @@ export default function ViewerPage() {
 
   return (
     <ParentView className="relative">
-      {data && (
-        <>
-          {data.file?.fileType === "image" ? (
-            <ImageViewer id={id} data={data.file} />
-          ) : (
-            <VideoViewer id={id} data={data.file!} />
-          )}
-        </>
-      )}
+      {data && <ImageViewer id={id} data={data.piece} />}
     </ParentView>
   )
 }

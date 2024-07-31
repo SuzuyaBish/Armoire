@@ -1,14 +1,12 @@
 import { windowHeight } from "@/constants/window"
-import { getFileWithThumbnailExcept } from "@/lib/api/files/queries"
-import { File, FileWithThumbnail } from "@/lib/db/schema/files"
-import { capitalize } from "@/lib/utils"
+import { getPiecesWithoutId } from "@/lib/api/pieces/queries"
+import { Piece } from "@/lib/db/schema/pieces"
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet"
 import MasonryList from "@react-native-seoul/masonry-list"
-import { BlurView } from "expo-blur"
 import { useRouter } from "expo-router"
 import { Edit2Icon, PlusIcon } from "lucide-react-native"
 import { FC, useRef } from "react"
@@ -26,7 +24,7 @@ import useSWR from "swr"
 import { Text } from "../StyledComponents"
 
 interface ImageViewerProps {
-  data: File
+  data: Piece
   id: string
 }
 
@@ -37,7 +35,7 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
   const translationY = useSharedValue(1)
   const translationYControls = useSharedValue(1)
 
-  const otherFetcher = async () => getFileWithThumbnailExcept(id)
+  const otherFetcher = async () => getPiecesWithoutId(id)
   const otherData = useSWR(id + "other", otherFetcher)
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -139,10 +137,10 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
             marginBottom: windowHeight - insets.bottom - insets.top - 70,
           }}
         ></View>
-        {otherData.data && otherData.data?.files.length > 0 && (
+        {otherData.data && otherData.data?.pieces.length > 0 && (
           <View className="z-40 flex flex-col bg-transparent">
             <MasonryList
-              data={otherData.data.files}
+              data={otherData.data.pieces}
               keyExtractor={(item): string => item.id}
               containerStyle={{
                 marginBottom: insets.bottom,
@@ -151,96 +149,32 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
               numColumns={2}
               showsVerticalScrollIndicator={false}
               renderItem={({ item, i }) => {
-                const piece: FileWithThumbnail = item as FileWithThumbnail
-
-                if (piece.fileType === "image") {
-                  return (
-                    <Pressable
-                      onPress={() =>
-                        router.push({
-                          pathname: "/viewer",
-                          params: { id: piece.id },
-                        })
-                      }
+                const piece: Piece = item as Piece
+                return (
+                  <Pressable
+                    onPress={() =>
+                      router.push({
+                        pathname: "/viewer",
+                        params: { id: piece.id },
+                      })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: 8,
+                      aspectRatio: piece.aspect_ratio!,
+                      position: "relative",
+                    }}
+                  >
+                    <Animated.Image
+                      source={{ uri: piece.filePath }}
+                      entering={FadeIn.delay(i * 100)}
                       style={{
+                        height: "100%",
                         width: "100%",
-                        padding: 8,
-                        aspectRatio: piece.aspect_ratio!,
-                        position: "relative",
                       }}
-                    >
-                      <Animated.Image
-                        source={{ uri: piece.filePath }}
-                        entering={FadeIn.delay(i * 100)}
-                        style={{
-                          height: "100%",
-                          width: "100%",
-                        }}
-                      />
-                      <BlurView
-                        className="absolute rounded-full px-2 py-1"
-                        tint="light"
-                        style={{
-                          bottom: 14,
-                          right: 14,
-                          overflow: "hidden",
-                        }}
-                      >
-                        <Text className="text-xs">
-                          {capitalize(piece.fileType)}
-                        </Text>
-                      </BlurView>
-                    </Pressable>
-                  )
-                } else {
-                  return (
-                    <Pressable
-                      onPress={() => {
-                        router.push({
-                          pathname: "/viewer",
-                          params: { id: piece.id },
-                        })
-                      }}
-                      style={{
-                        padding: 8,
-                        width: "100%",
-                        position: "relative",
-                      }}
-                    >
-                      {piece.thumbnail ? (
-                        <Animated.Image
-                          source={{ uri: piece.thumbnail }}
-                          entering={FadeIn.delay(i * 100)}
-                          style={{
-                            height: 200,
-                            width: "100%",
-                          }}
-                        />
-                      ) : (
-                        <View
-                          className="bg-cosmosMuted"
-                          style={{
-                            height: 200,
-                            width: "100%",
-                          }}
-                        />
-                      )}
-                      <BlurView
-                        className="absolute rounded-full px-2 py-1"
-                        tint="light"
-                        style={{
-                          bottom: 14,
-                          right: 14,
-                          overflow: "hidden",
-                        }}
-                      >
-                        <Text className="text-xs">
-                          {capitalize(piece.fileType)}
-                        </Text>
-                      </BlurView>
-                    </Pressable>
-                  )
-                }
+                    />
+                  </Pressable>
+                )
               }}
             />
           </View>
