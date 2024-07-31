@@ -77,6 +77,19 @@ export default function PhotoTaker() {
                 width: windowWidth - 10,
               }}
             >
+              <View className="absolute right-0 top-0 z-10 flex w-full flex-row items-center justify-end px-8 py-5">
+                <BlurView className="overflow-hidden rounded-full">
+                  <TouchableOpacity
+                    className="p-3"
+                    onPress={() => {
+                      setImage(undefined)
+                      bottomSheetRef.current?.dismiss()
+                    }}
+                  >
+                    <XIcon color="white" />
+                  </TouchableOpacity>
+                </BlurView>
+              </View>
               <Image
                 source={{ uri: image.uri }}
                 placeholder={blurhash}
@@ -133,7 +146,10 @@ export default function PhotoTaker() {
                   <BlurView className="overflow-hidden rounded-full">
                     <TouchableOpacity
                       className="p-3"
-                      onPress={() => bottomSheetRef.current?.dismiss()}
+                      onPress={() => {
+                        setImage(undefined)
+                        bottomSheetRef.current?.dismiss()
+                      }}
                     >
                       <XIcon color="white" />
                     </TouchableOpacity>
