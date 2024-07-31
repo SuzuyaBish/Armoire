@@ -10,7 +10,6 @@ import {
 } from "@/lib/db/schema/pieces"
 import { eq } from "drizzle-orm"
 import { copyAsync, deleteAsync } from "expo-file-system"
-import { NotificationFeedbackType, notificationAsync } from "expo-haptics"
 
 export const createPiece = async (piece: NewPieceParams, oldPath: string) => {
   const newPiece = insertPieceSchema.parse(piece)
@@ -23,8 +22,6 @@ export const createPiece = async (piece: NewPieceParams, oldPath: string) => {
         to: newPiece.filePath,
       })
     }
-
-    notificationAsync(NotificationFeedbackType.Success)
 
     return { piece: p }
   } catch (err) {

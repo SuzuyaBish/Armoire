@@ -1,23 +1,19 @@
 import Image from "@/components/Image"
 import { ParentView, Text } from "@/components/StyledComponents"
-import { getPieces } from "@/lib/api/pieces/queries"
+import { getOrderedPieces } from "@/lib/api/pieces/queries"
 import { Piece } from "@/lib/db/schema/pieces"
 import { cn } from "@/lib/utils"
 import MasonryList from "@react-native-seoul/masonry-list"
-import { useRouter } from "expo-router"
 import { useRef, useState } from "react"
 import { TouchableOpacity, View } from "react-native"
 import PagerView from "react-native-pager-view"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
 import useSWR from "swr"
 
 export default function TabOneScreen() {
-  const router = useRouter()
   const [selectedPage, setSelectedPage] = useState(0)
   const pagerRef = useRef<PagerView>(null)
-  const insets = useSafeAreaInsets()
 
-  const { data, mutate, isLoading } = useSWR("pieces", getPieces)
+  const { data, mutate, isLoading } = useSWR("pieces", getOrderedPieces)
   return (
     <ParentView hasInsets hasPadding className="relative">
       <View className="my-6 flex flex-row items-center justify-center gap-x-7">

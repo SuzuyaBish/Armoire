@@ -19,12 +19,10 @@ import {
 import React, { useCallback, useRef } from "react"
 import { Pressable, TouchableOpacity } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useSWRConfig } from "swr"
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets()
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const { mutate } = useSWRConfig()
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()

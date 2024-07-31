@@ -26,7 +26,7 @@ export default function ViewerPage() {
 
   return (
     <ParentView className="relative">
-      {data && <ImageViewer id={id} data={data.piece} />}
+      {data && <ImageViewer id={id} data={data.piece!} />}
     </ParentView>
   )
 }

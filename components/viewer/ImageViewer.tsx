@@ -1,5 +1,5 @@
 import { windowHeight } from "@/constants/window"
-import { getPiecesWithoutId } from "@/lib/api/pieces/queries"
+import { getOrderedPiecesWithoutId } from "@/lib/api/pieces/queries"
 import { Piece } from "@/lib/db/schema/pieces"
 import {
   BottomSheetBackdrop,
@@ -35,7 +35,7 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
   const translationY = useSharedValue(1)
   const translationYControls = useSharedValue(1)
 
-  const otherFetcher = async () => getPiecesWithoutId(id)
+  const otherFetcher = async () => getOrderedPiecesWithoutId(id)
   const otherData = useSWR(id + "other", otherFetcher)
 
   const scrollHandler = useAnimatedScrollHandler((event) => {

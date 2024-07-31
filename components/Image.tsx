@@ -18,6 +18,7 @@ import { Pressable, View } from "react-native"
 import Animated, { FadeIn } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
+import ImageSaver from "./ImageSaver"
 import { Text } from "./StyledComponents"
 
 interface ImageProps {
@@ -60,7 +61,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
       />
       <BottomSheetModal
         ref={bottomSheetRef}
-        snapPoints={["27.5%"]}
+        snapPoints={["34%"]}
         bottomInset={insets.bottom}
         handleComponent={null}
         detached
@@ -101,6 +102,10 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
               <Text className="text-lg">Move Element</Text>
               <FolderPlusIcon color="#D0D0D0" />
             </Pressable>
+            <ImageSaver
+              {...piece}
+              close={() => bottomSheetRef.current?.dismiss()}
+            />
             <Pressable
               onPress={async () => {
                 await deletePiece(piece.id)

@@ -1,6 +1,7 @@
 import { windowWidth } from "@/constants/window"
 import { createPiecesPath } from "@/lib/api/pieces/functions"
 import { createPiece } from "@/lib/api/pieces/mutations"
+import { NotificationFeedbackType, notificationAsync } from "expo-haptics"
 import { MediaTypeOptions, launchImageLibraryAsync } from "expo-image-picker"
 import React from "react"
 import { Image as DefaultImage, Pressable } from "react-native"
@@ -40,11 +41,12 @@ export default function ImagePicker() {
               },
               fileDetails.uri
             )
-
             mutate("pieces")
           }
         )
       }
+
+      notificationAsync(NotificationFeedbackType.Success)
     }
   }
   return (
