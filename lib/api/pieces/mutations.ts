@@ -9,7 +9,7 @@ import {
   updatePieceSchema,
 } from "@/lib/db/schema/pieces"
 import { eq } from "drizzle-orm"
-import { copyAsync } from "expo-file-system"
+import { copyAsync, deleteAsync } from "expo-file-system"
 import { NotificationFeedbackType, notificationAsync } from "expo-haptics"
 
 export const createPiece = async (piece: NewPieceParams, oldPath: string) => {
@@ -61,6 +61,9 @@ export const deletePiece = async (id: PieceId) => {
       .delete(pieces)
       .where(eq(pieces.id, pieceId!))
       .returning()
+
+    await deleteAsync(p.filePath)
+
     return { piece: p }
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again"
