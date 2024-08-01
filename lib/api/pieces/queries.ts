@@ -61,8 +61,19 @@ export const getOrderedFavoritePieces = async () => {
     .select({ piece: pieces, collection: collections })
     .from(pieces)
     .leftJoin(collections, eq(pieces.collectionId, collections.id))
-    .where(eq(pieces.favorite, true))
+    .where(eq(pieces.favorited, true))
     .orderBy(desc(pieces.createdAt))
+  const p = rows.map((r) => ({ ...r.piece, collection: r.collection }))
+  return { pieces: p }
+}
+
+export const getFirst3OrderedPieces = async () => {
+  const rows = await db
+    .select({ piece: pieces, collection: collections })
+    .from(pieces)
+    .leftJoin(collections, eq(pieces.collectionId, collections.id))
+    .orderBy(desc(pieces.createdAt))
+    .limit(3)
   const p = rows.map((r) => ({ ...r.piece, collection: r.collection }))
   return { pieces: p }
 }
