@@ -13,13 +13,23 @@ import {
   MousePointerClickIcon,
   TrashIcon,
 } from "lucide-react-native"
-import { FC, useRef } from "react"
-import { Pressable } from "react-native"
+import { FC, useRef, useState } from "react"
+import { Pressable, TouchableOpacity } from "react-native"
 import Animated, { FadeIn } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
 import BottomSheetOptionsList from "./BottomSheetOptionsList"
 import ImageSaver from "./ImageSaver"
+import { Text } from "./StyledComponents"
+import {
+  AlertDialog,
+  AlertDialogBackdrop,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "./ui/alert-dialog"
+import { Toast, useToast } from "./ui/toast"
 
 interface ImageProps {
   piece: Piece
@@ -28,10 +38,42 @@ interface ImageProps {
 }
 
 const Image: FC<ImageProps> = ({ piece, index }) => {
+  const toast = useToast()
   const router = useRouter()
   const bottomSheetRef = useRef<BottomSheetModal>(null)
   const insets = useSafeAreaInsets()
   const { mutate } = useSWRConfig()
+
+  const [toastId, setToastId] = useState("0")
+  const [dialogOpen, setDeleteDialogOpen] = useState(false)
+
+  const handleToast = () => {
+    if (!toast.isActive(toastId)) {
+      showNewToast()
+    }
+  }
+  const showNewToast = () => {
+    const newId = Math.random().toString()
+    setToastId(newId)
+    toast.show({
+      id: newId,
+      placement: "top",
+      duration: 3000,
+      render: ({ id }) => {
+        const uniqueToastId = "toast-" + id
+        return (
+          <Toast
+            nativeID={uniqueToastId}
+            action="muted"
+            variant="solid"
+            className="rounded-full bg-white"
+          >
+            <Text className="text-black">Photo deleted successfully</Text>
+          </Toast>
+        )
+      },
+    })
+  }
   return (
     <Pressable
       onPress={() =>
@@ -115,9 +157,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
                 icon: <TrashIcon color="#FC2A2C" size={20} />,
                 text: "Delete Photo",
                 onPress: async () => {
-                  console.log("pressed")
-                  await deletePiece(piece.id)
-                  mutate("pieces")
+                  setDeleteDialogOpen(true)
                   bottomSheetRef.current?.dismiss()
                 },
               },
@@ -125,6 +165,45 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
           />
         </BottomSheetView>
       </BottomSheetModal>
+      <AlertDialog
+        isOpen={dialogOpen}
+        onClose={() => setDeleteDialogOpen(!dialogOpen)}
+        size="md"
+      >
+        <AlertDialogBackdrop />
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <Text family="fancy" className="text-2xl">
+              Delete photo
+            </Text>
+          </AlertDialogHeader>
+          <AlertDialogBody className="mb-4 mt-3">
+            <Text>
+              Deleting the photo cannot be undone. Make sure you have it saved
+              to your gallery before deleting.
+            </Text>
+          </AlertDialogBody>
+          <AlertDialogFooter className="">
+            <TouchableOpacity
+              className="rounded-lg bg-white px-5 py-2"
+              onPress={() => setDeleteDialogOpen(false)}
+            >
+              <Text className="text-black">Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="rounded-lg bg-destructive px-5 py-2"
+              onPress={async () => {
+                await deletePiece(piece.id)
+                mutate("pieces")
+                setDeleteDialogOpen(false)
+                handleToast()
+              }}
+            >
+              <Text className="text-destructiveText">Delete</Text>
+            </TouchableOpacity>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Pressable>
   )
 }

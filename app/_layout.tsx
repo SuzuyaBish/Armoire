@@ -1,4 +1,5 @@
 import { Text } from "@/components/StyledComponents"
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider"
 import { db } from "@/lib/db"
 import migrations from "@/lib/db/migrations/migrations"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
@@ -54,46 +55,48 @@ function RootLayoutNav() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
-        <Stack
-          screenOptions={{
-            headerTintColor: "#fff",
-            headerBackVisible: false,
-            headerBackTitleVisible: false,
-            headerShadowVisible: false,
-            headerStyle: {
-              backgroundColor: "#0E0E0E",
-            },
-          }}
-        >
-          <Stack.Screen
-            name="(tabs)"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="viewer"
-            options={{
-              headerLeft: () => {
-                return (
-                  <TouchableOpacity
-                    onPress={() => router.back()}
-                    onLongPress={() => router.dismissAll()}
-                  >
-                    <ArrowLeftIcon />
-                  </TouchableOpacity>
-                )
-              },
-              headerTitle: ({ children }) => {
-                return (
-                  <View className="rounded-full bg-cosmosMuted px-4 py-2">
-                    <Text>{children}</Text>
-                  </View>
-                )
+        <GluestackUIProvider mode="dark">
+          <Stack
+            screenOptions={{
+              headerTintColor: "#fff",
+              headerBackVisible: false,
+              headerBackTitleVisible: false,
+              headerShadowVisible: false,
+              headerStyle: {
+                backgroundColor: "#0E0E0E",
               },
             }}
-          />
-        </Stack>
+          >
+            <Stack.Screen
+              name="(tabs)"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="viewer"
+              options={{
+                headerLeft: () => {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => router.back()}
+                      onLongPress={() => router.dismissAll()}
+                    >
+                      <ArrowLeftIcon />
+                    </TouchableOpacity>
+                  )
+                },
+                headerTitle: ({ children }) => {
+                  return (
+                    <View className="rounded-full bg-cosmosMuted px-4 py-2">
+                      <Text>{children}</Text>
+                    </View>
+                  )
+                },
+              }}
+            />
+          </Stack>
+        </GluestackUIProvider>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
   )
