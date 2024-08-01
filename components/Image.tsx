@@ -8,6 +8,7 @@ import {
 import { ImpactFeedbackStyle, impactAsync } from "expo-haptics"
 import { useRouter } from "expo-router"
 import {
+  ArchiveIcon,
   FolderPlusIcon,
   MousePointerClickIcon,
   TrashIcon,
@@ -94,7 +95,12 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
               },
               {
                 icon: <FolderPlusIcon color="#D0D0D0" size={20} />,
-                text: "Move Photo",
+                text: "Add to Collection",
+                onPress: () => {},
+              },
+              {
+                icon: <ArchiveIcon color="#D0D0D0" size={20} />,
+                text: "Archive Photo",
                 onPress: () => {},
               },
             ]}

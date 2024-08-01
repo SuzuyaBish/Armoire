@@ -42,7 +42,7 @@ const ImageSaver: FC<ImageSaverProps> = ({ close, ...props }) => {
         close()
       }}
     >
-      <Text className="text-lg">Save Photo</Text>
+      <Text className="text-lg">Save to Gallery</Text>
       <SaveIcon color="#D0D0D0" />
     </Pressable>
   )
