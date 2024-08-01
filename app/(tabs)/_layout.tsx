@@ -1,7 +1,6 @@
+import CollectionCreator from "@/components/CollectionCreator"
 import ImagePicker from "@/components/ImagePicker"
 import PhotoTaker from "@/components/PhotoTaker"
-import { Text } from "@/components/StyledComponents"
-import { windowWidth } from "@/constants/window"
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -17,7 +16,7 @@ import {
   UserIcon,
 } from "lucide-react-native"
 import React, { useCallback, useRef } from "react"
-import { Pressable, TouchableOpacity } from "react-native"
+import { TouchableOpacity } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function TabLayout() {
@@ -106,13 +105,7 @@ export default function TabLayout() {
                 >
                   <ImagePicker />
                   <PhotoTaker />
-                  <Pressable
-                    onPress={() => {}}
-                    style={{ width: windowWidth / 3 - 10 }}
-                    className="flex h-full items-center justify-center"
-                  >
-                    <Text>Collection</Text>
-                  </Pressable>
+                  <CollectionCreator />
                 </BottomSheetView>
               </BottomSheetModal>
             </TouchableOpacity>

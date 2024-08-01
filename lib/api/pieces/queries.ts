@@ -55,3 +55,14 @@ export const getOrderedPiecesWithoutId = async (id: string) => {
   const p = rows.map((r) => ({ ...r.piece, collection: r.collection }))
   return { pieces: p }
 }
+
+export const getOrderedFavoritePieces = async () => {
+  const rows = await db
+    .select({ piece: pieces, collection: collections })
+    .from(pieces)
+    .leftJoin(collections, eq(pieces.collectionId, collections.id))
+    .where(eq(pieces.favorite, true))
+    .orderBy(desc(pieces.createdAt))
+  const p = rows.map((r) => ({ ...r.piece, collection: r.collection }))
+  return { pieces: p }
+}

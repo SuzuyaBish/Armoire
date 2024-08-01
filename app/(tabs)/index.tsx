@@ -32,7 +32,7 @@ export default function TabOneScreen() {
               selectedPage === 1 ? "text-white" : "text-cosmosMutedText"
             )}
           >
-            Collections
+            Favorites
           </Text>
         </TouchableOpacity>
       </View>
@@ -44,7 +44,7 @@ export default function TabOneScreen() {
           flex: 1,
         }}
       >
-        <View className="flex-1 overflow-visible">
+        <View className="flex-1 overflow-visible" key="1">
           {!isLoading && data && data?.pieces.length > 0 && (
             <MasonryList
               data={data.pieces}
@@ -63,7 +63,32 @@ export default function TabOneScreen() {
           )}
         </View>
         <View key="2">
-          <Text>{JSON.stringify(data, null, 2)}</Text>
+          {!isLoading &&
+          data &&
+          data?.pieces.filter((v) => v.favorited).length > 0 ? (
+            <MasonryList
+              data={data.pieces.filter((v) => v.favorited)}
+              keyExtractor={(item): string => item.id}
+              numColumns={2}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item, i }) => {
+                const piece = item as Piece
+                return (
+                  <Image piece={piece} index={i} length={data.pieces.length} />
+                )
+              }}
+              refreshing={isLoading}
+              onRefresh={() => mutate()}
+            />
+          ) : (
+            <View className="flex flex-1 flex-col items-center justify-center">
+              <Text className="text-3xl" family="fancy">
+                No Favorites
+              </Text>
+              <Text className="mt-3">You can add new favorites by holding</Text>
+              <Text>down on an image and selecting favorite image.</Text>
+            </View>
+          )}
         </View>
       </PagerView>
     </ParentView>

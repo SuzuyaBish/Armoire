@@ -22,6 +22,7 @@ export const pieces = sqliteTable("pieces", {
     .references(() => collections.id, { onDelete: "cascade" })
     .notNull(),
   age: integer("age", { mode: "timestamp" }),
+  favorited: integer("favorite", { mode: "boolean" }).default(false),
   archived: integer("archived", { mode: "boolean" }),
 
   createdAt: text("created_at")

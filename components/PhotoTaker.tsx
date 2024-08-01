@@ -125,6 +125,7 @@ export default function PhotoTaker() {
                           filePath: path.uri + image.uri.split("/").pop(),
                           aspect_ratio: image.width / image.height,
                           collectionId: "",
+                          favorited: false,
                         },
                         image.uri
                       )

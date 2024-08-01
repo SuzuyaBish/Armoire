@@ -1,5 +1,5 @@
-import { deletePiece } from "@/lib/api/pieces/mutations"
-import { Piece } from "@/lib/db/schema/pieces"
+import { deletePiece, updatePiece } from "@/lib/api/pieces/mutations"
+import { Piece, UpdatePieceParams } from "@/lib/db/schema/pieces"
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -11,6 +11,7 @@ import {
   ArchiveIcon,
   FolderPlusIcon,
   MousePointerClickIcon,
+  StarsIcon,
   TrashIcon,
 } from "lucide-react-native"
 import { FC, useRef, useState } from "react"
@@ -130,6 +131,27 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
           <BottomSheetOptionsList
             roundBottom={false}
             items={[
+              {
+                icon: <StarsIcon color="#D0D0D0" size={20} />,
+                text: piece.favorited ? "Unfavorite Photo" : "Favorite Photo",
+                onPress: async () => {
+                  const updatedPiece: UpdatePieceParams = {
+                    id: piece.id!,
+                    title: piece.title,
+                    age: piece.age!,
+                    tags: piece.tags,
+                    archived: piece.archived!,
+                    filePath: piece.filePath,
+                    aspect_ratio: piece.aspect_ratio!,
+                    collectionId: piece.collectionId,
+                    favorited: !piece.favorited,
+                  }
+
+                  await updatePiece(piece.id!, updatedPiece)
+                  mutate("pieces")
+                  bottomSheetRef.current?.dismiss()
+                },
+              },
               {
                 icon: <MousePointerClickIcon color="#D0D0D0" size={20} />,
                 text: "Select Photo",

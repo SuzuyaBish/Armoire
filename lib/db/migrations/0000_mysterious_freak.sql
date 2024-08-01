@@ -14,6 +14,7 @@ CREATE TABLE `pieces` (
 	`aspect_ratio` integer,
 	`collection_id` text NOT NULL,
 	`age` integer,
+	`favorite` integer DEFAULT false,
 	`archived` integer,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	`updated_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,

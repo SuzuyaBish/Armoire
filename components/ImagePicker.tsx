@@ -38,6 +38,7 @@ export default function ImagePicker() {
                 title: fileDetails.uri.split("/").pop()!,
                 archived: false,
                 collectionId: "",
+                favorited: false,
               },
               fileDetails.uri
             )
