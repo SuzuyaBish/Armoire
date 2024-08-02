@@ -1,11 +1,17 @@
 import { multiDeletePiece } from "@/lib/api/pieces/mutations"
 import { useHomeStore } from "@/lib/store/home-store"
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet"
 import { BlurView } from "expo-blur"
 import { PlusIcon, TrashIcon } from "lucide-react-native"
 import { AnimatePresence, MotiView } from "moti/build"
 import React from "react"
 import { TouchableOpacity, View } from "react-native"
 import { useSWRConfig } from "swr"
+import AddToCollectionMultiView from "./AddToCollectionMultiView"
 import { Text } from "./StyledComponents"
 import {
   AlertDialog,
@@ -19,6 +25,7 @@ import {
 export default function SelectionBar() {
   const { mutate } = useSWRConfig()
   const homeStore = useHomeStore()
+  const collectionRef = React.useRef<BottomSheetModal>(null)
 
   const [dialogOpen, setDeleteDialogOpen] = React.useState(false)
   return (
@@ -38,10 +45,14 @@ export default function SelectionBar() {
                 </Text>
               </View>
               <View className="mr-6 flex grow flex-row items-center justify-evenly gap-x-4 border-x border-cosmosMutedText px-3">
+                <TouchableOpacity
+                  onPress={() => collectionRef.current?.present()}
+                >
+                  <PlusIcon color="white" />
+                </TouchableOpacity>
                 <TouchableOpacity onPress={() => setDeleteDialogOpen(true)}>
                   <TrashIcon color="white" size={20} />
                 </TouchableOpacity>
-                <PlusIcon color="white" />
               </View>
               <TouchableOpacity
                 onPress={() => {
@@ -105,6 +116,35 @@ export default function SelectionBar() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <BottomSheetModal
+        ref={collectionRef}
+        enableDynamicSizing
+        style={{
+          borderRadius: 24,
+          overflow: "hidden",
+        }}
+        handleIndicatorStyle={{ backgroundColor: "#D0D0D0" }}
+        backdropComponent={(e) => {
+          return (
+            <BottomSheetBackdrop
+              onPress={() => collectionRef.current?.dismiss()}
+              appearsOnIndex={0}
+              disappearsOnIndex={-1}
+              style={[e.style, { backgroundColor: "rgba(0,0,0,0.6)" }]}
+              animatedIndex={e.animatedIndex}
+              animatedPosition={e.animatedPosition}
+            />
+          )
+        }}
+        backgroundStyle={{ backgroundColor: "#191919" }}
+      >
+        <BottomSheetView>
+          <AddToCollectionMultiView
+            close={() => collectionRef.current?.dismiss()}
+          />
+        </BottomSheetView>
+      </BottomSheetModal>
     </>
   )
 }

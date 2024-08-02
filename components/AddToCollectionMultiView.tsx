@@ -1,8 +1,9 @@
 import { getAllCollectionsWithFirstPiece } from "@/lib/api/collections/queries"
 import { updatePiece } from "@/lib/api/pieces/mutations"
-import { Piece, UpdatePieceParams } from "@/lib/db/schema/pieces"
+import { UpdatePieceParams } from "@/lib/db/schema/pieces"
+import { useHomeStore } from "@/lib/store/home-store"
 import { Image } from "expo-image"
-import { PlusCircleIcon, PlusIcon, XCircleIcon } from "lucide-react-native"
+import { PlusCircleIcon, PlusIcon } from "lucide-react-native"
 import { FC } from "react"
 import { TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
@@ -10,18 +11,16 @@ import useSWR, { useSWRConfig } from "swr"
 import CollectionCreator from "./CollectionCreator"
 import { Text } from "./StyledComponents"
 
-interface AddToCollectionViewProps {
-  selectedPiece: Piece
+interface AddToCollectionMultiViewProps {
   close: () => void
 }
 
-const AddToCollectionView: FC<AddToCollectionViewProps> = ({
-  selectedPiece,
+const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
   close,
 }) => {
   const insets = useSafeAreaInsets()
   const { mutate } = useSWRConfig()
-  const parsedCollections = JSON.parse(selectedPiece.collections) as string[]
+  const homeStore = useHomeStore()
 
   const {
     data,
@@ -57,43 +56,37 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
                 <TouchableOpacity
                   key={collection.id}
                   onPress={async () => {
-                    const newPiece: UpdatePieceParams = {
-                      title: selectedPiece.title,
-                      collections: selectedPiece.collections,
-                      filePath: selectedPiece.filePath,
-                      id: selectedPiece.id,
-                      favorited: selectedPiece.favorited!,
-                      age: selectedPiece.age!,
-                      tags: selectedPiece.tags!,
-                      archived: selectedPiece.archived!,
-                      aspect_ratio: selectedPiece.aspect_ratio!,
-                    }
+                    for (const piece of homeStore.selectedPieces) {
+                      const parsedCollections = JSON.parse(
+                        piece.collections
+                      ) as string[]
+                      if (!parsedCollections.includes(collection.id)) {
+                        const newCollections = [
+                          ...parsedCollections,
+                          collection.id,
+                        ]
+                        const newPiece: UpdatePieceParams = {
+                          title: piece.title,
+                          collections: JSON.stringify(newCollections),
+                          filePath: piece.filePath,
+                          id: piece.id,
+                          favorited: piece.favorited!,
+                          age: piece.age!,
+                          tags: piece.tags!,
+                          archived: piece.archived!,
+                          aspect_ratio: piece.aspect_ratio!,
+                        }
 
-                    if (parsedCollections.includes(collection.id)) {
-                      newPiece.collections = JSON.stringify(
-                        parsedCollections.filter((c) => c !== collection.id)
-                      )
+                        await updatePiece(piece.id!, newPiece)
 
-                      await updatePiece(selectedPiece.id, newPiece)
+                        mutate("pieces")
+                        collectionsMutate()
 
-                      mutate("pieces")
-                      collectionsMutate()
+                        homeStore.setSelectedPieces([])
+                        homeStore.setIsSelecting(false)
 
-                      close()
-                    } else {
-                      const newCollections = [
-                        ...parsedCollections,
-                        collection.id,
-                      ]
-
-                      newPiece.collections = JSON.stringify(newCollections)
-
-                      await updatePiece(selectedPiece.id, newPiece)
-
-                      mutate("pieces")
-                      collectionsMutate()
-
-                      close()
+                        close()
+                      }
                     }
                   }}
                   className="flex flex-row items-center justify-between"
@@ -121,11 +114,7 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
                       </Text>
                     </View>
                   </View>
-                  {parsedCollections.includes(collection.id) ? (
-                    <XCircleIcon color="#AAAAAA" />
-                  ) : (
-                    <PlusCircleIcon color="#AAAAAA" />
-                  )}
+                  <PlusCircleIcon color="#AAAAAA" />
                 </TouchableOpacity>
               )
             })}
@@ -157,4 +146,4 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
   )
 }
 
-export default AddToCollectionView
+export default AddToCollectionMultiView

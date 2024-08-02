@@ -45,9 +45,15 @@ export default function TabOneScreen() {
               type: "timing",
               duration: 2500,
             }}
-            className="my-6 flex flex-row items-center justify-center gap-x-7"
+            className="my-3 flex flex-row items-center justify-center"
           >
-            <TouchableOpacity onPress={() => pagerRef.current?.setPage(0)}>
+            <TouchableOpacity
+              onPress={() => pagerRef.current?.setPage(0)}
+              className={cn(
+                "rounded-full px-6 py-3",
+                selectedPage === 0 && "bg-muted"
+              )}
+            >
               <Text
                 className={cn(
                   selectedPage === 0 ? "text-white" : "text-cosmosMutedText"
@@ -56,7 +62,13 @@ export default function TabOneScreen() {
                 Clothes
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => pagerRef.current?.setPage(1)}>
+            <TouchableOpacity
+              onPress={() => pagerRef.current?.setPage(1)}
+              className={cn(
+                "rounded-full px-6 py-3",
+                selectedPage === 1 && "bg-muted"
+              )}
+            >
               <Text
                 className={cn(
                   selectedPage === 1 ? "text-white" : "text-cosmosMutedText"
