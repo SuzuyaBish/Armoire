@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "777ae663-9388-44fc-8681-ffc40a76872a",
+  "id": "5c70a4a0-c759-444b-83a0-ec1ce7dc1dac",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "collections": {
@@ -135,21 +135,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "pieces_collection_id_collections_id_fk": {
-          "name": "pieces_collection_id_collections_id_fk",
-          "tableFrom": "pieces",
-          "tableTo": "collections",
-          "columnsFrom": [
-            "collection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

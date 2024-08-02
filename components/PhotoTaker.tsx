@@ -124,7 +124,7 @@ export default function PhotoTaker() {
                           age: new Date(),
                           filePath: path.uri + image.uri.split("/").pop(),
                           aspect_ratio: image.width / image.height,
-                          collectionId: "",
+                          collections: JSON.stringify([]),
                           favorited: false,
                         },
                         image.uri

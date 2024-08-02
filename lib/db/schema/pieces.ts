@@ -3,7 +3,6 @@ import { sql } from "drizzle-orm"
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 import { z } from "zod"
-import { collections } from "./collections"
 
 import "react-native-get-random-values"
 
@@ -18,9 +17,7 @@ export const pieces = sqliteTable("pieces", {
   tags: text("tags"),
   filePath: text("file_path").notNull(),
   aspect_ratio: integer("aspect_ratio"),
-  collectionId: text("collection_id")
-    .references(() => collections.id, { onDelete: "cascade" })
-    .notNull(),
+  collections: text("collection_id").notNull(),
   age: integer("age", { mode: "timestamp" }),
   favorited: integer("favorite", { mode: "boolean" }).default(false),
   archived: integer("archived", { mode: "boolean" }),
@@ -39,7 +36,7 @@ const baseSchema = createSelectSchema(pieces).omit(timestamps)
 export const insertPieceSchema = createInsertSchema(pieces).omit(timestamps)
 export const insertPieceParams = baseSchema
   .extend({
-    collectionId: z.coerce.string().min(1),
+    collections: z.coerce.string().min(1),
     age: z.coerce.date(),
     archived: z.coerce.boolean(),
   })
@@ -49,7 +46,7 @@ export const insertPieceParams = baseSchema
 
 export const updatePieceSchema = baseSchema
 export const updatePieceParams = baseSchema.extend({
-  collectionId: z.coerce.string().min(1),
+  collections: z.coerce.string().min(1),
   age: z.coerce.date(),
   archived: z.coerce.boolean(),
 })

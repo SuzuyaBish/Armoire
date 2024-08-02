@@ -19,6 +19,7 @@ import { Pressable, TouchableOpacity } from "react-native"
 import Animated, { FadeIn } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
+import AddToCollectionView from "./AddToCollectionView"
 import BottomSheetOptionsList from "./BottomSheetOptionsList"
 import ImageSaver from "./ImageSaver"
 import { Text } from "./StyledComponents"
@@ -41,9 +42,11 @@ interface ImageProps {
 const Image: FC<ImageProps> = ({ piece, index }) => {
   const toast = useToast()
   const router = useRouter()
-  const bottomSheetRef = useRef<BottomSheetModal>(null)
   const insets = useSafeAreaInsets()
   const { mutate } = useSWRConfig()
+
+  const bottomSheetRef = useRef<BottomSheetModal>(null)
+  const collectionRef = useRef<BottomSheetModal>(null)
 
   const [toastId, setToastId] = useState("0")
   const [dialogOpen, setDeleteDialogOpen] = useState(false)
@@ -143,7 +146,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
                     archived: piece.archived!,
                     filePath: piece.filePath,
                     aspect_ratio: piece.aspect_ratio!,
-                    collectionId: piece.collectionId,
+                    collections: piece.collections,
                     favorited: !piece.favorited,
                   }
 
@@ -160,7 +163,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
               {
                 icon: <FolderPlusIcon color="#D0D0D0" size={20} />,
                 text: "Add to Collection",
-                onPress: () => {},
+                onPress: () => collectionRef.current?.present(),
               },
               {
                 icon: <ArchiveIcon color="#D0D0D0" size={20} />,
@@ -217,6 +220,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
               onPress={async () => {
                 await deletePiece(piece.id)
                 mutate("pieces")
+                mutate("collections")
                 setDeleteDialogOpen(false)
                 handleToast()
               }}
@@ -226,6 +230,35 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <BottomSheetModal
+        ref={collectionRef}
+        enableDynamicSizing
+        style={{
+          borderRadius: 24,
+          overflow: "hidden",
+        }}
+        handleIndicatorStyle={{ backgroundColor: "#D0D0D0" }}
+        backdropComponent={(e) => {
+          return (
+            <BottomSheetBackdrop
+              onPress={() => collectionRef.current?.dismiss()}
+              appearsOnIndex={0}
+              disappearsOnIndex={-1}
+              style={[e.style, { backgroundColor: "rgba(0,0,0,0.6)" }]}
+              animatedIndex={e.animatedIndex}
+              animatedPosition={e.animatedPosition}
+            />
+          )
+        }}
+        backgroundStyle={{ backgroundColor: "#191919" }}
+      >
+        <BottomSheetView>
+          <AddToCollectionView
+            close={() => collectionRef.current?.dismiss()}
+            selectedPiece={piece}
+          />
+        </BottomSheetView>
+      </BottomSheetModal>
     </Pressable>
   )
 }

@@ -13,7 +13,11 @@ import { useSWRConfig } from "swr"
 import { Text } from "./StyledComponents"
 import { Toast, useToast } from "./ui/toast"
 
-export default function CollectionCreator() {
+export default function CollectionCreator({
+  trigger,
+}: {
+  trigger?: React.ReactNode
+}) {
   const toast = useToast()
   const bottomSheetRef = useRef<BottomSheetModal>(null)
   const { mutate } = useSWRConfig()
@@ -50,14 +54,27 @@ export default function CollectionCreator() {
   }
 
   return (
-    <Pressable
-      onPress={() => {
-        bottomSheetRef.current?.present()
-      }}
-      style={{ width: windowWidth / 3 - 10 }}
-      className="flex h-full items-center justify-center"
-    >
-      <Text>Collection</Text>
+    <>
+      {!trigger ? (
+        <Pressable
+          onPress={() => {
+            bottomSheetRef.current?.present()
+          }}
+          style={{ width: windowWidth / 3 - 10 }}
+          className="flex h-full items-center justify-center"
+        >
+          <Text>Collection</Text>
+        </Pressable>
+      ) : (
+        <Pressable
+          onPress={() => {
+            bottomSheetRef.current?.present()
+          }}
+        >
+          {trigger}
+        </Pressable>
+      )}
+
       <BottomSheetModal
         ref={bottomSheetRef}
         enableDynamicSizing
@@ -125,6 +142,6 @@ export default function CollectionCreator() {
           </View>
         </BottomSheetView>
       </BottomSheetModal>
-    </Pressable>
+    </>
   )
 }

@@ -43,7 +43,7 @@ const ImageSaver: FC<ImageSaverProps> = ({ close, ...props }) => {
       }}
     >
       <Text className="text-lg">Save to Gallery</Text>
-      <SaveIcon color="#D0D0D0" />
+      <SaveIcon color="#D0D0D0" size={20} />
     </Pressable>
   )
 }

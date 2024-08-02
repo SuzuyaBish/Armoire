@@ -1,79 +1,53 @@
 import { db } from "@/lib/db/index"
-import { collections } from "@/lib/db/schema/collections"
 import { pieceIdSchema, pieces, type PieceId } from "@/lib/db/schema/pieces"
 import { desc, eq, ne } from "drizzle-orm"
 
 export const getPieces = async () => {
-  const rows = await db
-    .select({ piece: pieces, collection: collections })
-    .from(pieces)
-    .leftJoin(collections, eq(pieces.collectionId, collections.id))
-  const p = rows.map((r) => ({ ...r.piece, collection: r.collection }))
-  return { pieces: p }
+  const rows = await db.select().from(pieces)
+  return { pieces: rows }
 }
 
 export const getOrderedPieces = async () => {
-  const rows = await db
-    .select({ piece: pieces, collection: collections })
-    .from(pieces)
-    .leftJoin(collections, eq(pieces.collectionId, collections.id))
-    .orderBy(desc(pieces.createdAt))
+  const rows = await db.select().from(pieces).orderBy(desc(pieces.createdAt))
 
-  const p = rows.map((r) => ({ ...r.piece, collection: r.collection }))
-  return { pieces: p }
+  return { pieces: rows }
 }
 
 export const getPieceById = async (id: PieceId) => {
   const { id: pieceId } = pieceIdSchema.parse({ id })
-  const [row] = await db
-    .select({ piece: pieces, collection: collections })
-    .from(pieces)
-    .where(eq(pieces.id, pieceId))
-    .leftJoin(collections, eq(pieces.collectionId, collections.id))
+  const [row] = await db.select().from(pieces).where(eq(pieces.id, pieceId))
   if (row === undefined) return {}
-  const p = { ...row.piece, collection: row.collection }
-  return { piece: p }
+  return { piece: row }
 }
 
 export const getPiecesWithoutId = async (id: string) => {
-  const rows = await db
-    .select({ piece: pieces, collection: collections })
-    .from(pieces)
-    .leftJoin(collections, eq(pieces.collectionId, collections.id))
-    .where(ne(pieces.id, id))
-  const p = rows.map((r) => ({ ...r.piece, collection: r.collection }))
-  return { pieces: p }
+  const rows = await db.select().from(pieces).where(ne(pieces.id, id))
+  return { pieces: rows }
 }
 
 export const getOrderedPiecesWithoutId = async (id: string) => {
   const rows = await db
-    .select({ piece: pieces, collection: collections })
+    .select()
     .from(pieces)
-    .leftJoin(collections, eq(pieces.collectionId, collections.id))
     .where(ne(pieces.id, id))
     .orderBy(desc(pieces.createdAt))
-  const p = rows.map((r) => ({ ...r.piece, collection: r.collection }))
-  return { pieces: p }
+  return { pieces: rows }
 }
 
 export const getOrderedFavoritePieces = async () => {
   const rows = await db
-    .select({ piece: pieces, collection: collections })
+    .select()
     .from(pieces)
-    .leftJoin(collections, eq(pieces.collectionId, collections.id))
     .where(eq(pieces.favorited, true))
     .orderBy(desc(pieces.createdAt))
-  const p = rows.map((r) => ({ ...r.piece, collection: r.collection }))
-  return { pieces: p }
+  return { pieces: rows }
 }
 
 export const getFirst3OrderedPieces = async () => {
   const rows = await db
-    .select({ piece: pieces, collection: collections })
+    .select()
     .from(pieces)
-    .leftJoin(collections, eq(pieces.collectionId, collections.id))
     .orderBy(desc(pieces.createdAt))
     .limit(3)
-  const p = rows.map((r) => ({ ...r.piece, collection: r.collection }))
-  return { pieces: p }
+  return { pieces: rows }
 }

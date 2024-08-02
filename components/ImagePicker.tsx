@@ -37,7 +37,7 @@ export default function ImagePicker() {
                 tags: JSON.stringify([]),
                 title: fileDetails.uri.split("/").pop()!,
                 archived: false,
-                collectionId: "",
+                collections: JSON.stringify([]),
                 favorited: false,
               },
               fileDetails.uri

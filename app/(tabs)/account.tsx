@@ -29,12 +29,12 @@ export default function AccountScreen() {
           <SettingsIcon size={24} color="white" />
         </TouchableOpacity>
       </View>
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="flex flex-row flex-wrap justify-between">
           {!isLoading && data && data.allData && data.allData.length > 0 && (
             <>
               <View className="mb-5 flex flex-col">
-                {allData && allData.pieces.length > 0 && (
+                {allData && allData.pieces.length > 0 ? (
                   <View
                     className="flex flex-row items-center justify-between"
                     style={{
@@ -80,11 +80,20 @@ export default function AccountScreen() {
                       </View>
                     )}
                   </View>
+                ) : (
+                  <View
+                    className="bg-cosmosMuted"
+                    style={{
+                      width: dimension,
+                      aspectRatio: 1,
+                    }}
+                  />
                 )}
                 <View className="mt-2">
                   <Text className="text-sm">All Elements</Text>
                   <Text className="text-sm text-cosmosMutedText">
-                    {allData?.pieces.length} photos
+                    {allData?.pieces.length}{" "}
+                    {allData?.pieces.length! > 1 ? "photos" : "photo"}
                   </Text>
                 </View>
               </View>

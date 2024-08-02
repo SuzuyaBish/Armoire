@@ -32,23 +32,28 @@ export const getCollectionWithPieces = async (id: CollectionId) => {
     .where(eq(collections.id, collectionId))
   if (row === undefined) return {}
   const c = row
-  const piecesData = await db
-    .select()
-    .from(pieces)
-    .where(eq(pieces.collectionId, collectionId))
-  return { collection: c, piecesData }
+
+  const piecesData = await db.select().from(pieces)
+
+  const piecesDataFiltered = piecesData.filter((piece) => {
+    const collections = JSON.parse(piece.collections)
+    return collections.includes(collectionId)
+  })
+
+  return { collection: c, piecesData: piecesDataFiltered }
 }
 
 export const getAllCollectionsWithFirstPiece = async () => {
   const collectionsData = await db.select().from(collections)
-  const allData = await Promise.all(
-    collectionsData.map(async (collection) => {
-      const piecesData = await db
-        .select()
-        .from(pieces)
-        .where(eq(pieces.collectionId, collection.id))
-      return { ...collection, piecesData }
+
+  const piecesData = await db.select().from(pieces)
+  const allData = collectionsData.map((collection) => {
+    const piecesDataFiltered = piecesData.filter((piece) => {
+      const collections = JSON.parse(piece.collections)
+      return collections.includes(collection.id)
     })
-  )
+    return { ...collection, piecesData: piecesDataFiltered }
+  })
+
   return { allData }
 }
