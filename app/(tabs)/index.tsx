@@ -1,9 +1,13 @@
 import Image from "@/components/Image"
+import SelectionBar from "@/components/SelectionBar"
 import { ParentView, Text } from "@/components/StyledComponents"
 import { getOrderedPieces } from "@/lib/api/pieces/queries"
 import { Piece } from "@/lib/db/schema/pieces"
+import { useHomeStore } from "@/lib/store/home-store"
 import { cn } from "@/lib/utils"
+import { AnimatePresence } from "@legendapp/motion"
 import MasonryList from "@react-native-seoul/masonry-list"
+import { MotiView } from "moti/build"
 import { useRef, useState } from "react"
 import { TouchableOpacity, View } from "react-native"
 import PagerView from "react-native-pager-view"
@@ -12,30 +16,58 @@ import useSWR from "swr"
 export default function TabOneScreen() {
   const [selectedPage, setSelectedPage] = useState(0)
   const pagerRef = useRef<PagerView>(null)
+  const homeStore = useHomeStore()
 
   const { data, mutate, isLoading } = useSWR("pieces", getOrderedPieces)
   return (
     <ParentView hasInsets hasPadding className="relative">
-      <View className="my-6 flex flex-row items-center justify-center gap-x-7">
-        <TouchableOpacity onPress={() => pagerRef.current?.setPage(0)}>
-          <Text
-            className={cn(
-              selectedPage === 0 ? "text-white" : "text-cosmosMutedText"
-            )}
+      <SelectionBar />
+      <AnimatePresence>
+        {homeStore.isSelecting ? (
+          <MotiView
+            from={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            exitTransition={{
+              type: "timing",
+              duration: 2500,
+            }}
+            className="my-6 flex items-center justify-center"
           >
-            Clothes
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => pagerRef.current?.setPage(1)}>
-          <Text
-            className={cn(
-              selectedPage === 1 ? "text-white" : "text-cosmosMutedText"
-            )}
+            <Text>Selecting</Text>
+          </MotiView>
+        ) : (
+          <MotiView
+            from={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            exitTransition={{
+              type: "timing",
+              duration: 2500,
+            }}
+            className="my-6 flex flex-row items-center justify-center gap-x-7"
           >
-            Favorites
-          </Text>
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity onPress={() => pagerRef.current?.setPage(0)}>
+              <Text
+                className={cn(
+                  selectedPage === 0 ? "text-white" : "text-cosmosMutedText"
+                )}
+              >
+                Clothes
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => pagerRef.current?.setPage(1)}>
+              <Text
+                className={cn(
+                  selectedPage === 1 ? "text-white" : "text-cosmosMutedText"
+                )}
+              >
+                Favorites
+              </Text>
+            </TouchableOpacity>
+          </MotiView>
+        )}
+      </AnimatePresence>
       <PagerView
         ref={pagerRef}
         initialPage={selectedPage}

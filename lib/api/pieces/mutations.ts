@@ -1,6 +1,7 @@
 import { db } from "@/lib/db/index"
 import {
   NewPieceParams,
+  Piece,
   PieceId,
   UpdatePieceParams,
   insertPieceSchema,
@@ -62,6 +63,20 @@ export const deletePiece = async (id: PieceId) => {
     await deleteAsync(p.filePath)
 
     return { piece: p }
+  } catch (err) {
+    const message = (err as Error).message ?? "Error, please try again"
+    console.error(message)
+    throw { error: message }
+  }
+}
+
+export const multiDeletePiece = async (pieces: Piece[]) => {
+  try {
+    for (const piece of pieces) {
+      await deletePiece(piece.id)
+    }
+
+    return { pieces: [] }
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again"
     console.error(message)

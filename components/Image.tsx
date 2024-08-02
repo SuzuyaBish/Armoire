@@ -1,5 +1,6 @@
 import { deletePiece, updatePiece } from "@/lib/api/pieces/mutations"
 import { Piece, UpdatePieceParams } from "@/lib/db/schema/pieces"
+import { useHomeStore } from "@/lib/store/home-store"
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -44,6 +45,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { mutate } = useSWRConfig()
+  const homeStore = useHomeStore()
 
   const bottomSheetRef = useRef<BottomSheetModal>(null)
   const collectionRef = useRef<BottomSheetModal>(null)
@@ -80,12 +82,22 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
   }
   return (
     <Pressable
-      onPress={() =>
-        router.push({
-          pathname: "/viewer",
-          params: { id: piece.id },
-        })
-      }
+      onPress={() => {
+        if (homeStore.isSelecting) {
+          if (homeStore.selectedPieces.includes(piece)) {
+            homeStore.setSelectedPieces(
+              homeStore.selectedPieces.filter((v) => v.id !== piece.id)
+            )
+          } else {
+            homeStore.setSelectedPieces([...homeStore.selectedPieces, piece])
+          }
+        } else {
+          router.push({
+            pathname: "/viewer",
+            params: { id: piece.id },
+          })
+        }
+      }}
       onLongPress={() => {
         impactAsync(ImpactFeedbackStyle.Medium)
         bottomSheetRef.current?.present()
@@ -103,6 +115,10 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
         style={{
           height: "100%",
           width: "100%",
+          borderWidth: homeStore.selectedPieces.includes(piece) ? 4 : 0,
+          borderColor: homeStore.selectedPieces.includes(piece)
+            ? "#586CC0"
+            : "transparent",
         }}
       />
       <BottomSheetModal
@@ -158,7 +174,11 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
               {
                 icon: <MousePointerClickIcon color="#D0D0D0" size={20} />,
                 text: "Select Photo",
-                onPress: () => {},
+                onPress: () => {
+                  homeStore.setIsSelecting(true)
+                  homeStore.setSelectedPieces([piece])
+                  bottomSheetRef.current?.dismiss()
+                },
               },
               {
                 icon: <FolderPlusIcon color="#D0D0D0" size={20} />,
