@@ -1,6 +1,6 @@
 import { ParentView, Text } from "@/components/StyledComponents"
 import { windowWidth } from "@/constants/window"
-import { getCollections } from "@/lib/api/collections/queries"
+import { getAllCollectionsWithFirstPiece } from "@/lib/api/collections/queries"
 import { getOrderedPieces } from "@/lib/api/pieces/queries"
 import { Image } from "expo-image"
 import { SettingsIcon } from "lucide-react-native"
@@ -9,8 +9,13 @@ import { Pressable, TouchableOpacity, View } from "react-native"
 import useSWR from "swr"
 
 export default function AccountScreen() {
-  const { data, isLoading } = useSWR("collections", getCollections)
+  const { data, isLoading } = useSWR(
+    "collections",
+    getAllCollectionsWithFirstPiece
+  )
   const { data: allData } = useSWR("pieces", getOrderedPieces)
+
+  const dimension = windowWidth / 2 - 24
   return (
     <ParentView hasInsets hasPadding className="relative px-4">
       <View className="mb-6 mt-3 flex flex-row items-center justify-between">
@@ -24,15 +29,15 @@ export default function AccountScreen() {
           <SettingsIcon size={24} color="white" />
         </TouchableOpacity>
       </View>
-      <View className="flex flex-row flex-wrap items-center justify-between">
-        {!isLoading && data && data.collections.length > 0 && (
+      <View className="flex flex-row flex-wrap justify-between">
+        {!isLoading && data && data.allData && data.allData.length > 0 && (
           <>
-            <View className="flex flex-col">
+            <View className="mb-5 flex flex-col">
               {allData && allData.pieces.length > 0 && (
                 <View
                   className="flex flex-row items-center justify-between"
                   style={{
-                    width: windowWidth / 2 - 16,
+                    width: dimension,
                     aspectRatio: 1,
                   }}
                 >
@@ -75,21 +80,53 @@ export default function AccountScreen() {
                 </View>
               )}
               <View className="mt-2">
-                <Text>All Elements</Text>
-                <Text className="text-cosmosMutedText">
+                <Text className="text-sm">All Elements</Text>
+                <Text className="text-sm text-cosmosMutedText">
                   {allData?.pieces.length} photos
                 </Text>
               </View>
             </View>
-            <View>
-              {data.collections.map((collection) => {
-                return (
-                  <TouchableOpacity key={collection.id}>
-                    <Text>{collection.title}</Text>
-                  </TouchableOpacity>
-                )
-              })}
-            </View>
+            {data.allData.map((collection) => {
+              return (
+                <TouchableOpacity key={collection.id} className="mb-5">
+                  {collection.coverImage ? (
+                    <Image
+                      source={{ uri: collection.coverImage }}
+                      style={{
+                        width: dimension,
+                        aspectRatio: 1,
+                      }}
+                    />
+                  ) : (
+                    <>
+                      {collection.piecesData.length > 0 ? (
+                        <Image
+                          source={{ uri: collection.piecesData[0].filePath }}
+                          style={{
+                            width: dimension,
+                            aspectRatio: 1,
+                          }}
+                        />
+                      ) : (
+                        <View
+                          className="bg-cosmosMuted"
+                          style={{
+                            width: dimension,
+                            aspectRatio: 1,
+                          }}
+                        />
+                      )}
+                    </>
+                  )}
+                  <View className="mt-2">
+                    <Text className="text-sm">{collection.title}</Text>
+                    <Text className="text-sm text-cosmosMutedText">
+                      {collection.piecesData.length} photos
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )
+            })}
           </>
         )}
       </View>
