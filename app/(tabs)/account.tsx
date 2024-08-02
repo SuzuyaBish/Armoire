@@ -5,7 +5,7 @@ import { getOrderedPieces } from "@/lib/api/pieces/queries"
 import { Image } from "expo-image"
 import { SettingsIcon } from "lucide-react-native"
 import React from "react"
-import { Pressable, TouchableOpacity, View } from "react-native"
+import { Pressable, ScrollView, TouchableOpacity, View } from "react-native"
 import useSWR from "swr"
 
 export default function AccountScreen() {
@@ -29,107 +29,110 @@ export default function AccountScreen() {
           <SettingsIcon size={24} color="white" />
         </TouchableOpacity>
       </View>
-      <View className="flex flex-row flex-wrap justify-between">
-        {!isLoading && data && data.allData && data.allData.length > 0 && (
-          <>
-            <View className="mb-5 flex flex-col">
-              {allData && allData.pieces.length > 0 && (
-                <View
-                  className="flex flex-row items-center justify-between"
-                  style={{
-                    width: dimension,
-                    aspectRatio: 1,
-                  }}
-                >
-                  <Image
-                    source={{ uri: allData?.pieces[0].filePath }}
-                    contentFit="cover"
+      <ScrollView className="flex-1">
+        <View className="flex flex-row flex-wrap justify-between">
+          {!isLoading && data && data.allData && data.allData.length > 0 && (
+            <>
+              <View className="mb-5 flex flex-col">
+                {allData && allData.pieces.length > 0 && (
+                  <View
+                    className="flex flex-row items-center justify-between"
                     style={{
-                      width: allData.pieces.length > 1 ? "50%" : "100%",
-                      height: "100%",
+                      width: dimension,
+                      aspectRatio: 1,
                     }}
-                  />
-                  {allData?.pieces.length > 1 && (
-                    <View
-                      className="flex flex-col"
+                  >
+                    <Image
+                      source={{ uri: allData?.pieces[0].filePath }}
+                      contentFit="cover"
                       style={{
-                        width: "50%",
+                        width: allData.pieces.length > 1 ? "50%" : "100%",
                         height: "100%",
                       }}
-                    >
-                      <Image
-                        source={{ uri: allData?.pieces[1].filePath }}
-                        contentFit="cover"
+                    />
+                    {allData?.pieces.length > 1 && (
+                      <View
+                        className="flex flex-col"
                         style={{
-                          width: "100%",
-                          height: allData?.pieces?.length > 2 ? "50%" : "100%",
+                          width: "50%",
+                          height: "100%",
                         }}
-                      />
-                      {allData.pieces.length > 2 && (
+                      >
                         <Image
-                          source={{ uri: allData?.pieces[2].filePath }}
+                          source={{ uri: allData?.pieces[1].filePath }}
                           contentFit="cover"
                           style={{
                             width: "100%",
-                            height: "50%",
+                            height:
+                              allData?.pieces?.length > 2 ? "50%" : "100%",
                           }}
                         />
-                      )}
-                    </View>
-                  )}
-                </View>
-              )}
-              <View className="mt-2">
-                <Text className="text-sm">All Elements</Text>
-                <Text className="text-sm text-cosmosMutedText">
-                  {allData?.pieces.length} photos
-                </Text>
-              </View>
-            </View>
-            {data.allData.map((collection) => {
-              return (
-                <TouchableOpacity key={collection.id} className="mb-5">
-                  {collection.coverImage ? (
-                    <Image
-                      source={{ uri: collection.coverImage }}
-                      style={{
-                        width: dimension,
-                        aspectRatio: 1,
-                      }}
-                    />
-                  ) : (
-                    <>
-                      {collection.piecesData.length > 0 ? (
-                        <Image
-                          source={{ uri: collection.piecesData[0].filePath }}
-                          style={{
-                            width: dimension,
-                            aspectRatio: 1,
-                          }}
-                        />
-                      ) : (
-                        <View
-                          className="bg-cosmosMuted"
-                          style={{
-                            width: dimension,
-                            aspectRatio: 1,
-                          }}
-                        />
-                      )}
-                    </>
-                  )}
-                  <View className="mt-2">
-                    <Text className="text-sm">{collection.title}</Text>
-                    <Text className="text-sm text-cosmosMutedText">
-                      {collection.piecesData.length} photos
-                    </Text>
+                        {allData.pieces.length > 2 && (
+                          <Image
+                            source={{ uri: allData?.pieces[2].filePath }}
+                            contentFit="cover"
+                            style={{
+                              width: "100%",
+                              height: "50%",
+                            }}
+                          />
+                        )}
+                      </View>
+                    )}
                   </View>
-                </TouchableOpacity>
-              )
-            })}
-          </>
-        )}
-      </View>
+                )}
+                <View className="mt-2">
+                  <Text className="text-sm">All Elements</Text>
+                  <Text className="text-sm text-cosmosMutedText">
+                    {allData?.pieces.length} photos
+                  </Text>
+                </View>
+              </View>
+              {data.allData.map((collection) => {
+                return (
+                  <TouchableOpacity key={collection.id} className="mb-5">
+                    {collection.coverImage ? (
+                      <Image
+                        source={{ uri: collection.coverImage }}
+                        style={{
+                          width: dimension,
+                          aspectRatio: 1,
+                        }}
+                      />
+                    ) : (
+                      <>
+                        {collection.piecesData.length > 0 ? (
+                          <Image
+                            source={{ uri: collection.piecesData[0].filePath }}
+                            style={{
+                              width: dimension,
+                              aspectRatio: 1,
+                            }}
+                          />
+                        ) : (
+                          <View
+                            className="bg-cosmosMuted"
+                            style={{
+                              width: dimension,
+                              aspectRatio: 1,
+                            }}
+                          />
+                        )}
+                      </>
+                    )}
+                    <View className="mt-2">
+                      <Text className="text-sm">{collection.title}</Text>
+                      <Text className="text-sm text-cosmosMutedText">
+                        {collection.piecesData.length} photos
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                )
+              })}
+            </>
+          )}
+        </View>
+      </ScrollView>
     </ParentView>
   )
 }
