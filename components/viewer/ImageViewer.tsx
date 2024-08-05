@@ -1,15 +1,10 @@
 import { windowHeight } from "@/constants/window"
 import { getOrderedPiecesWithoutId } from "@/lib/api/pieces/queries"
 import { Piece } from "@/lib/db/schema/pieces"
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet"
 import MasonryList from "@react-native-seoul/masonry-list"
 import { useRouter } from "expo-router"
 import { Edit2Icon, PlusIcon } from "lucide-react-native"
-import { FC, useRef } from "react"
+import { FC } from "react"
 import { Pressable, TouchableOpacity, View } from "react-native"
 import Animated, {
   FadeIn,
@@ -21,7 +16,6 @@ import Animated, {
 } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import useSWR from "swr"
-import { Text } from "../StyledComponents"
 
 interface ImageViewerProps {
   data: Piece
@@ -31,7 +25,6 @@ interface ImageViewerProps {
 const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const translationY = useSharedValue(1)
   const translationYControls = useSharedValue(1)
 
@@ -117,8 +110,10 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            console.log("pressed")
-            bottomSheetModalRef.current?.present()
+            router.push({
+              pathname: "/editor",
+              params: { id: data.id },
+            })
           }}
           className="flex size-14 items-center justify-center rounded-full bg-cosmosMuted"
         >
@@ -180,27 +175,6 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
           </View>
         )}
       </Animated.ScrollView>
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        enableDynamicSizing
-        handleComponent={null}
-        backdropComponent={(e) => {
-          return (
-            <BottomSheetBackdrop
-              onPress={() => bottomSheetModalRef.current?.dismiss()}
-              appearsOnIndex={0}
-              disappearsOnIndex={-1}
-              style={[e.style, { backgroundColor: "rgba(0,0,0,0.6)" }]}
-              animatedIndex={e.animatedIndex}
-              animatedPosition={e.animatedPosition}
-            />
-          )
-        }}
-      >
-        <BottomSheetView className="h-96">
-          <Text>Hey</Text>
-        </BottomSheetView>
-      </BottomSheetModal>
     </View>
   )
 }

@@ -1,14 +1,11 @@
 import { ParentView } from "@/components/StyledComponents"
 import ImageViewer from "@/components/viewer/ImageViewer"
 import { getPieceById } from "@/lib/api/pieces/queries"
+import { ViewerPageProps } from "@/lib/types/viewer-page"
 import { format } from "date-fns"
 import { useLocalSearchParams, useNavigation } from "expo-router"
 import React from "react"
 import useSWR from "swr"
-
-type ViewerPageProps = {
-  id: string
-}
 
 export default function ViewerPage() {
   const { id } = useLocalSearchParams() as ViewerPageProps

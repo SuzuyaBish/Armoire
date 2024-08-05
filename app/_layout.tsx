@@ -95,6 +95,29 @@ function RootLayoutNav() {
                 },
               }}
             />
+
+            <Stack.Screen
+              name="editor"
+              options={{
+                headerLeft: () => {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => router.back()}
+                      onLongPress={() => router.dismissAll()}
+                    >
+                      <ArrowLeftIcon />
+                    </TouchableOpacity>
+                  )
+                },
+                headerTitle: () => {
+                  return (
+                    <Text family="fancy" className="text-2xl">
+                      Edit Photo
+                    </Text>
+                  )
+                },
+              }}
+            />
           </Stack>
         </GluestackUIProvider>
       </BottomSheetModalProvider>
