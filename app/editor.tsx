@@ -1,13 +1,18 @@
 import { ParentView, Text } from "@/components/StyledComponents"
 import { Switch } from "@/components/ui/switch"
+import { defaultTags } from "@/constants/default_tags"
 import { getPieceById } from "@/lib/api/pieces/queries"
 import { ViewerPageProps } from "@/lib/types/viewer-page"
-import { format } from "date-fns"
 import { Image } from "expo-image"
 import { useLocalSearchParams } from "expo-router"
-import { ChevronRightIcon } from "lucide-react-native"
+import { CheckIcon, ChevronRightIcon } from "lucide-react-native"
 import React, { useState } from "react"
-import { Pressable, ScrollView, TextInput, View } from "react-native"
+import { View } from "react-native"
+import Animated, {
+  FadeIn,
+  FadeOut,
+  LinearTransition,
+} from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import useSWR from "swr"
 
@@ -26,7 +31,7 @@ export default function EditorScreen() {
         paddingBottom: insets.bottom,
       }}
     >
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <View className="flex-1">
         {piece && (
           <View className="gap-y-7">
             <View className="flex items-center">
@@ -42,39 +47,51 @@ export default function EditorScreen() {
               />
             </View>
             <View className="gap-y-3 px-4">
-              <Text className="text-cosmosMutedText">Image Title</Text>
-              <TextInput
-                placeholder="Title"
-                className="rounded-full border border-cosmosMutedText/10 bg-cosmosMuted p-5 text-white placeholder:text-cosmosMutedText"
-                value={piece!.title!}
-                selectTextOnFocus
-                onChange={(e) =>
-                  setPiece({ ...piece, title: e.nativeEvent.text })
-                }
-                style={{
-                  fontFamily: "favoritRegular",
-                  fontSize: 16,
-                }}
-              />
-            </View>
-            <View className="gap-y-3 px-4">
-              <Text className="text-cosmosMutedText">Image Age</Text>
-              <Pressable className="rounded-full border border-cosmosMutedText/10 bg-cosmosMuted p-5 text-white placeholder:text-cosmosMutedText">
-                <Text>{format(piece.age!, "dd MMMM yyyy")}</Text>
-              </Pressable>
-            </View>
-            <View className="gap-y-3 px-4">
               <Text className="text-cosmosMutedText">Image Tags</Text>
-              <TextInput
-                placeholder="Title"
-                className="rounded-full border border-cosmosMutedText/10 bg-cosmosMuted p-5 text-white placeholder:text-cosmosMutedText"
-                style={{
-                  fontFamily: "favoritRegular",
-                  fontSize: 16,
-                }}
-              />
+              <Animated.View
+                className="flex flex-row flex-wrap gap-2"
+                layout={LinearTransition}
+              >
+                {defaultTags.map((item) => {
+                  return (
+                    <Animated.View
+                      layout={LinearTransition}
+                      onTouchEnd={() => {
+                        const tags = JSON.parse(piece.tags!)
+
+                        if (tags.includes(item)) {
+                          setPiece({
+                            ...piece,
+                            tags: JSON.stringify(
+                              tags.filter((tag: string) => tag !== item)
+                            ),
+                          })
+                        } else {
+                          setPiece({
+                            ...piece,
+                            tags: JSON.stringify([...tags, item]),
+                          })
+                        }
+                      }}
+                      className="mb-3 flex flex-row items-center rounded-full border border-muted px-3 py-2"
+                      style={{}}
+                    >
+                      <Text className="text-xs">{item}</Text>
+                      {JSON.parse(piece.tags!).includes(item) && (
+                        <Animated.View
+                          entering={FadeIn.duration(350)}
+                          exiting={FadeOut}
+                          className="ml-2 flex size-7 items-center justify-center rounded-full bg-white"
+                        >
+                          <CheckIcon size={16} color="green" />
+                        </Animated.View>
+                      )}
+                    </Animated.View>
+                  )
+                })}
+              </Animated.View>
             </View>
-            <View className="pt-5">
+            <View className="">
               <View className="flex flex-row items-center justify-between border-y border-cosmosMutedText/10 px-4 py-7">
                 <View>
                   <Text className="text-lg">Favorit Photo</Text>
@@ -123,7 +140,7 @@ export default function EditorScreen() {
             </View>
           </View>
         )}
-      </ScrollView>
+      </View>
     </ParentView>
   )
 }

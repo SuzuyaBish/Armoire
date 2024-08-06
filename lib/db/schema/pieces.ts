@@ -13,12 +13,10 @@ export const pieces = sqliteTable("pieces", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => uuid()),
-  title: text("title"),
   tags: text("tags"),
   filePath: text("file_path").notNull(),
   aspect_ratio: integer("aspect_ratio"),
   collections: text("collection_id").notNull(),
-  age: integer("age", { mode: "timestamp" }),
   favorited: integer("favorite", { mode: "boolean" }).default(false),
   archived: integer("archived", { mode: "boolean" }),
 
@@ -37,7 +35,6 @@ export const insertPieceSchema = createInsertSchema(pieces).omit(timestamps)
 export const insertPieceParams = baseSchema
   .extend({
     collections: z.coerce.string().min(1),
-    age: z.coerce.date(),
     archived: z.coerce.boolean(),
   })
   .omit({
@@ -47,7 +44,6 @@ export const insertPieceParams = baseSchema
 export const updatePieceSchema = baseSchema
 export const updatePieceParams = baseSchema.extend({
   collections: z.coerce.string().min(1),
-  age: z.coerce.date(),
   archived: z.coerce.boolean(),
 })
 export const pieceIdSchema = baseSchema.pick({ id: true })

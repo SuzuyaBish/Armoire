@@ -119,9 +119,7 @@ export default function PhotoTaker() {
                       await createPiece(
                         {
                           archived: false,
-                          title: "Untitled",
                           tags: JSON.stringify([]),
-                          age: new Date(),
                           filePath: path.uri + image.uri.split("/").pop(),
                           aspect_ratio: image.width / image.height,
                           collections: JSON.stringify([]),

@@ -33,9 +33,7 @@ export default function ImagePicker() {
               {
                 filePath: path.uri + fileDetails.uri.split("/").pop(),
                 aspect_ratio: aspectRatio,
-                age: new Date(),
                 tags: JSON.stringify([]),
-                title: fileDetails.uri.split("/").pop()!,
                 archived: false,
                 collections: JSON.stringify([]),
                 favorited: false,
