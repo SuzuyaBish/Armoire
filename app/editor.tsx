@@ -1,21 +1,19 @@
+import AlertDialog from "@/components/AlertDialog"
 import AppBar from "@/components/AppBar"
+import ImageSaverMenuItem from "@/components/ImageSaverMenuItem"
+import MenuItem from "@/components/MenuItem"
 import { ParentView, Text } from "@/components/StyledComponents"
 import { Switch } from "@/components/ui/switch"
 import { defaultTags } from "@/constants/default_tags"
-import { updatePiece } from "@/lib/api/pieces/mutations"
+import { deletePiece, updatePiece } from "@/lib/api/pieces/mutations"
 import { getPieceById } from "@/lib/api/pieces/queries"
 import { ViewerPageProps } from "@/lib/types/viewer-page"
 import { cn } from "@/lib/utils"
 import { AnimatePresence } from "@legendapp/motion"
 import Color from "color"
 import { Image } from "expo-image"
-import { useLocalSearchParams } from "expo-router"
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  PlusIcon,
-} from "lucide-react-native"
+import { useLocalSearchParams, useRouter } from "expo-router"
+import { CheckIcon, ChevronDownIcon, PlusIcon } from "lucide-react-native"
 import { MotiView } from "moti/build"
 import { MotiPressable } from "moti/interactions"
 import React, { useState } from "react"
@@ -25,6 +23,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import useSWR, { useSWRConfig } from "swr"
 
 export default function EditorScreen() {
+  const router = useRouter()
   const { mutate } = useSWRConfig()
   const insets = useSafeAreaInsets()
   const { id } = useLocalSearchParams() as ViewerPageProps
@@ -33,6 +32,7 @@ export default function EditorScreen() {
 
   const [piece, setPiece] = useState(data!.piece)
   const [tagsExpanded, setTagsExpanded] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const green = "#7FA45A"
   const fadedGreen = Color(green).alpha(0.1).toString()
@@ -214,51 +214,59 @@ export default function EditorScreen() {
                   </AnimatePresence>
                 </MotiView>
               </View>
-              <View className="flex flex-row items-center justify-between border-y border-cosmosMutedText/10 px-4 py-7">
-                <View>
-                  <Text className="text-lg">Favorite Photo</Text>
-                  <Text className="text-sm text-cosmosMutedText">
-                    Mark this photo as one of your favorits
-                  </Text>
-                </View>
-                <Switch
-                  value={piece.favorited!}
-                  trackColor={{
-                    true: green,
-                    false: "#1D1D1D",
-                  }}
-                  onChange={(e) => {
-                    setPiece({ ...piece, favorited: e.nativeEvent.value })
-                  }}
-                />
-              </View>
-              <View className="flex flex-row items-center justify-between border-b border-cosmosMutedText/10 px-4 py-7">
-                <View>
-                  <Text className="text-lg">Archive Photo</Text>
-                  <Text className="text-sm text-cosmosMutedText">
-                    Mark this photo as archived
-                  </Text>
-                </View>
-                <Switch
-                  value={piece.archived!}
-                  trackColor={{
-                    true: green,
-                    false: "#1D1D1D",
-                  }}
-                  onChange={(e) => {
-                    setPiece({ ...piece, archived: e.nativeEvent.value })
-                  }}
-                />
-              </View>
-              <View className="flex flex-row items-center justify-between px-4 py-7">
-                <View>
-                  <Text className="text-lg">Delete Photo</Text>
-                  <Text className="text-sm text-cosmosMutedText">
-                    This action cannot be undone
-                  </Text>
-                </View>
-                <ChevronRightIcon size={26} color="white" />
-              </View>
+              <MenuItem
+                title="Favorite Photo"
+                description="Mark this photo as one of your favorits"
+                border="both"
+                rightItem={
+                  <Switch
+                    value={piece.favorited!}
+                    trackColor={{
+                      true: green,
+                      false: "#1D1D1D",
+                    }}
+                    onChange={(e) => {
+                      setPiece({ ...piece, favorited: e.nativeEvent.value })
+                    }}
+                  />
+                }
+              />
+              <MenuItem
+                title="Archive Photo"
+                description="Mark this photo as archived"
+                border="bottom"
+                rightItem={
+                  <Switch
+                    value={piece.archived!}
+                    trackColor={{
+                      true: green,
+                      false: "#1D1D1D",
+                    }}
+                    onChange={(e) => {
+                      setPiece({ ...piece, archived: e.nativeEvent.value })
+                    }}
+                  />
+                }
+              />
+              <ImageSaverMenuItem filePath={piece.filePath} />
+              <MenuItem
+                title="Delete Photo"
+                description="This action cannot be undone"
+                border="none"
+                onPress={() => setDialogOpen(true)}
+              />
+              <AlertDialog
+                type="delete"
+                open={dialogOpen}
+                onClose={() => setDialogOpen(false)}
+                onConfirm={async () => {
+                  await deletePiece(piece.id)
+                  mutate("pieces")
+                  mutate("collections")
+                  setDialogOpen(false)
+                  router.dismissAll()
+                }}
+              />
             </View>
           </View>
         )}

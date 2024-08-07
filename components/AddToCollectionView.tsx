@@ -1,6 +1,7 @@
 import { getAllCollectionsWithFirstPiece } from "@/lib/api/collections/queries"
 import { updatePiece } from "@/lib/api/pieces/mutations"
 import { Piece, UpdatePieceParams } from "@/lib/db/schema/pieces"
+import { NotificationFeedbackType, notificationAsync } from "expo-haptics"
 import { Image } from "expo-image"
 import { PlusCircleIcon, PlusIcon, XCircleIcon } from "lucide-react-native"
 import { FC } from "react"
@@ -58,12 +59,10 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
                   key={collection.id}
                   onPress={async () => {
                     const newPiece: UpdatePieceParams = {
-                      title: selectedPiece.title,
                       collections: selectedPiece.collections,
                       filePath: selectedPiece.filePath,
                       id: selectedPiece.id,
                       favorited: selectedPiece.favorited!,
-                      age: selectedPiece.age!,
                       tags: selectedPiece.tags!,
                       archived: selectedPiece.archived!,
                       aspect_ratio: selectedPiece.aspect_ratio!,
@@ -79,7 +78,7 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
                       mutate("pieces")
                       collectionsMutate()
 
-                      close()
+                      notificationAsync(NotificationFeedbackType.Success)
                     } else {
                       const newCollections = [
                         ...parsedCollections,
@@ -93,7 +92,7 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
                       mutate("pieces")
                       collectionsMutate()
 
-                      close()
+                      notificationAsync(NotificationFeedbackType.Success)
                     }
                   }}
                   className="flex flex-row items-center justify-between"

@@ -1,7 +1,7 @@
 import Image from "@/components/Image"
 import SelectionBar from "@/components/SelectionBar"
 import { ParentView, Text } from "@/components/StyledComponents"
-import { getOrderedPieces } from "@/lib/api/pieces/queries"
+import { getOrderedPiecesWithoutArchived } from "@/lib/api/pieces/queries"
 import { Piece } from "@/lib/db/schema/pieces"
 import { useHomeStore } from "@/lib/store/home-store"
 import { cn } from "@/lib/utils"
@@ -18,7 +18,10 @@ export default function TabOneScreen() {
   const pagerRef = useRef<PagerView>(null)
   const homeStore = useHomeStore()
 
-  const { data, mutate, isLoading } = useSWR("pieces", getOrderedPieces)
+  const { data, mutate, isLoading } = useSWR(
+    "pieces",
+    getOrderedPiecesWithoutArchived
+  )
   return (
     <ParentView hasInsets hasPadding className="relative">
       <SelectionBar />

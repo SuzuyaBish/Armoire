@@ -1,5 +1,6 @@
 import clsx, { ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { DialogTypes } from "./types/dialog-types"
 import { FontType } from "./types/font-types"
 
 export function cn(...inputs: ClassValue[]) {
@@ -114,4 +115,25 @@ export const calculateTranslation = (index: number, length: number) => {
 
 export const arrayItemInArray = (array1: string[], array2: string[]) => {
   return array1.some((item) => array2.includes(item))
+}
+
+export const generateDialogText = (type: DialogTypes) => {
+  if (type === "delete") {
+    return {
+      title: "Delete Photo",
+      body: "Deleting this photo cannot be undone. Make sure you have it saved to your gallery before deleting.",
+    }
+  }
+
+  if (type === "deleteMultiple") {
+    return {
+      title: "Delete Photos",
+      body: "Deleting these photos cannot be undone. Make sure you have them saved to your gallery before deleting.",
+    }
+  }
+
+  return {
+    title: "Delete Photo",
+    body: "Deleting the photo cannot be undone. Make sure you have it saved to your gallery before deleting.",
+  }
 }

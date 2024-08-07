@@ -1,4 +1,6 @@
 import { Piece } from "@/lib/db/schema/pieces"
+import { showNewToast } from "@/lib/toast"
+import { NotificationFeedbackType, notificationAsync } from "expo-haptics"
 import {
   createAlbumAsync,
   createAssetAsync,
@@ -8,12 +10,14 @@ import { SaveIcon } from "lucide-react-native"
 import { FC } from "react"
 import { Pressable } from "react-native"
 import { Text } from "./StyledComponents"
+import { useToast } from "./ui/toast"
 
 interface ImageSaverProps extends Piece {
   close: () => void
 }
 
 const ImageSaver: FC<ImageSaverProps> = ({ close, ...props }) => {
+  const toast = useToast()
   const [permissionResponse, requestPermission] = usePermissions()
   const getPermissions = async () => {
     if (!permissionResponse?.granted) {
@@ -38,6 +42,9 @@ const ImageSaver: FC<ImageSaverProps> = ({ close, ...props }) => {
           const asset = await createAssetAsync(props.filePath)
           await createAlbumAsync("Armoire", asset, false)
         }
+
+        notificationAsync(NotificationFeedbackType.Success)
+        showNewToast({ toast: toast, body: "Photo saved successfully!" })
 
         close()
       }}

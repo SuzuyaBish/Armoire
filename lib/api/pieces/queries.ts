@@ -13,6 +13,26 @@ export const getOrderedPieces = async () => {
   return { pieces: rows }
 }
 
+export const getOrderedPiecesWithoutArchived = async () => {
+  const rows = await db
+    .select()
+    .from(pieces)
+    .where(ne(pieces.archived, true))
+    .orderBy(desc(pieces.createdAt))
+
+  return { pieces: rows }
+}
+
+export const getOrderedArchived = async () => {
+  const rows = await db
+    .select()
+    .from(pieces)
+    .where(eq(pieces.archived, true))
+    .orderBy(desc(pieces.createdAt))
+
+  return { pieces: rows }
+}
+
 export const getPieceById = async (id: PieceId) => {
   const { id: pieceId } = pieceIdSchema.parse({ id })
   const [row] = await db.select().from(pieces).where(eq(pieces.id, pieceId))

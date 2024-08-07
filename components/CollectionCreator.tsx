@@ -6,6 +6,7 @@ import {
   BottomSheetTextInput,
   BottomSheetView,
 } from "@gorhom/bottom-sheet"
+import { selectionAsync } from "expo-haptics"
 import { SaveIcon, XIcon } from "lucide-react-native"
 import React, { useRef, useState } from "react"
 import { Pressable, TouchableOpacity, View } from "react-native"
@@ -58,6 +59,7 @@ export default function CollectionCreator({
       {!trigger ? (
         <Pressable
           onPress={() => {
+            selectionAsync()
             bottomSheetRef.current?.present()
           }}
           style={{ width: windowWidth / 3 - 10 }}
@@ -68,6 +70,7 @@ export default function CollectionCreator({
       ) : (
         <Pressable
           onPress={() => {
+            selectionAsync()
             bottomSheetRef.current?.present()
           }}
         >

@@ -2,6 +2,7 @@ import { getAllCollectionsWithFirstPiece } from "@/lib/api/collections/queries"
 import { updatePiece } from "@/lib/api/pieces/mutations"
 import { UpdatePieceParams } from "@/lib/db/schema/pieces"
 import { useHomeStore } from "@/lib/store/home-store"
+import { NotificationFeedbackType, notificationAsync } from "expo-haptics"
 import { Image } from "expo-image"
 import { PlusCircleIcon, PlusIcon } from "lucide-react-native"
 import { FC } from "react"
@@ -66,12 +67,10 @@ const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
                           collection.id,
                         ]
                         const newPiece: UpdatePieceParams = {
-                          title: piece.title,
                           collections: JSON.stringify(newCollections),
                           filePath: piece.filePath,
                           id: piece.id,
                           favorited: piece.favorited!,
-                          age: piece.age!,
                           tags: piece.tags!,
                           archived: piece.archived!,
                           aspect_ratio: piece.aspect_ratio!,
@@ -88,6 +87,8 @@ const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
                         close()
                       }
                     }
+
+                    notificationAsync(NotificationFeedbackType.Success)
                   }}
                   className="flex flex-row items-center justify-between"
                 >

@@ -12,15 +12,8 @@ import React from "react"
 import { TouchableOpacity, View } from "react-native"
 import { useSWRConfig } from "swr"
 import AddToCollectionMultiView from "./AddToCollectionMultiView"
+import AlertDialog from "./AlertDialog"
 import { Text } from "./StyledComponents"
-import {
-  AlertDialog,
-  AlertDialogBackdrop,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "./ui/alert-dialog"
 
 export default function SelectionBar() {
   const { mutate } = useSWRConfig()
@@ -70,53 +63,18 @@ export default function SelectionBar() {
         )}
       </AnimatePresence>
       <AlertDialog
-        isOpen={dialogOpen}
-        onClose={() => setDeleteDialogOpen(!dialogOpen)}
-        size="md"
-      >
-        <AlertDialogBackdrop />
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <Text family="fancy" className="text-2xl">
-              Delete {homeStore.selectedPieces.length}{" "}
-              {homeStore.selectedPieces.length > 1 ? "photos" : "photo"}
-            </Text>
-          </AlertDialogHeader>
-          <AlertDialogBody className="mb-4 mt-3">
-            <Text>
-              Deleting{" "}
-              {homeStore.selectedPieces.length > 1
-                ? "these photos"
-                : "this photo"}{" "}
-              cannot be undone. Make sure you have{" "}
-              {homeStore.selectedPieces.length > 1 ? "them" : "it"} saved to
-              your gallery before deleting.
-            </Text>
-          </AlertDialogBody>
-          <AlertDialogFooter className="">
-            <TouchableOpacity
-              className="rounded-lg bg-white px-5 py-2"
-              onPress={() => setDeleteDialogOpen(false)}
-            >
-              <Text className="text-black">Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="rounded-lg bg-destructive px-5 py-2"
-              onPress={async () => {
-                await multiDeletePiece(homeStore.selectedPieces)
-                mutate("pieces")
-                mutate("collections")
-                setDeleteDialogOpen(false)
-                homeStore.setSelectedPieces([])
-                homeStore.setIsSelecting(false)
-              }}
-            >
-              <Text className="text-destructiveText">Delete</Text>
-            </TouchableOpacity>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
+        type="deleteMultiple"
+        open={dialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={async () => {
+          await multiDeletePiece(homeStore.selectedPieces)
+          mutate("pieces")
+          mutate("collections")
+          setDeleteDialogOpen(false)
+          homeStore.setSelectedPieces([])
+          homeStore.setIsSelecting(false)
+        }}
+      />
       <BottomSheetModal
         ref={collectionRef}
         enableDynamicSizing
