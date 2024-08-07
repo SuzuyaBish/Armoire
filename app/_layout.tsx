@@ -99,6 +99,7 @@ function RootLayoutNav() {
             <Stack.Screen
               name="editor"
               options={{
+                headerShown: false,
                 headerLeft: () => {
                   return (
                     <TouchableOpacity

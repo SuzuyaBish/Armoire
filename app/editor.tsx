@@ -1,6 +1,8 @@
+import AppBar from "@/components/AppBar"
 import { ParentView, Text } from "@/components/StyledComponents"
 import { Switch } from "@/components/ui/switch"
 import { defaultTags } from "@/constants/default_tags"
+import { updatePiece } from "@/lib/api/pieces/mutations"
 import { getPieceById } from "@/lib/api/pieces/queries"
 import { ViewerPageProps } from "@/lib/types/viewer-page"
 import { cn } from "@/lib/utils"
@@ -12,19 +14,22 @@ import {
   CheckIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  PlusIcon,
 } from "lucide-react-native"
 import { MotiView } from "moti/build"
+import { MotiPressable } from "moti/interactions"
 import React, { useState } from "react"
 import { Pressable, ScrollView, View } from "react-native"
 import { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import useSWR from "swr"
+import useSWR, { useSWRConfig } from "swr"
 
 export default function EditorScreen() {
+  const { mutate } = useSWRConfig()
   const insets = useSafeAreaInsets()
   const { id } = useLocalSearchParams() as ViewerPageProps
   const fetcher = async () => await getPieceById(id)
-  const { data } = useSWR(id, fetcher)
+  const { data, mutate: currentPieceMutate } = useSWR(id, fetcher)
 
   const [piece, setPiece] = useState(data!.piece)
   const [tagsExpanded, setTagsExpanded] = useState(false)
@@ -33,13 +38,39 @@ export default function EditorScreen() {
   const fadedGreen = Color(green).alpha(0.1).toString()
   const muted = "#333"
 
+  const showActions = () => {
+    const cond1 = piece?.favorited !== data?.piece?.favorited
+    const cond2 = piece?.archived !== data?.piece?.archived
+    const cond3 = piece?.tags !== data?.piece?.tags
+
+    return cond1 || cond2 || cond3
+  }
+
   return (
     <ParentView
+      hasInsets
       className="pt-6"
       style={{
         paddingBottom: insets.bottom,
       }}
     >
+      <AppBar
+        custom={false}
+        title="Edit Photo"
+        hasBackButton
+        actionOnPress={async () => {
+          await updatePiece(piece!.id, {
+            ...piece!,
+            tags: piece!.tags,
+            favorited: piece!.favorited,
+            archived: piece!.archived!,
+          })
+          currentPieceMutate()
+          mutate("pieces")
+          mutate("collections")
+        }}
+        action={<>{showActions() && <Text>Done</Text>}</>}
+      />
       <View className="flex-1">
         {piece && (
           <View className="gap-y-7">
@@ -49,8 +80,8 @@ export default function EditorScreen() {
                 contentFit="cover"
                 contentPosition="center"
                 style={{
-                  width: 100,
-                  height: 100,
+                  width: 200,
+                  height: 200,
                   borderRadius: 10,
                 }}
               />
@@ -71,23 +102,36 @@ export default function EditorScreen() {
                       Add or remove tags from this photo
                     </Text>
                   </View>
-                  <MotiView
-                    animate={{
-                      transform: [
-                        {
-                          rotate: tagsExpanded ? "180deg" : "0deg",
-                        },
-                      ],
-                    }}
-                    transition={{ duration: 150, type: "timing" }}
-                  >
-                    <ChevronDownIcon size={26} color="white" />
-                  </MotiView>
+                  <View className="flex flex-row items-center gap-x-5">
+                    <MotiPressable
+                      animate={({ pressed }) => {
+                        "worklet"
+
+                        return {
+                          scale: pressed ? 0.9 : 1,
+                        }
+                      }}
+                    >
+                      <PlusIcon size={26} color="white" />
+                    </MotiPressable>
+                    <MotiView
+                      animate={{
+                        transform: [
+                          {
+                            rotate: tagsExpanded ? "180deg" : "0deg",
+                          },
+                        ],
+                      }}
+                      transition={{ duration: 150, type: "timing" }}
+                    >
+                      <ChevronDownIcon size={26} color="white" />
+                    </MotiView>
+                  </View>
                 </Pressable>
 
                 <MotiView
                   animate={{
-                    maxHeight: tagsExpanded ? 400 : 0,
+                    maxHeight: tagsExpanded ? 300 : 0,
                     height: "auto",
                     overflow: "hidden",
                   }}
@@ -172,7 +216,7 @@ export default function EditorScreen() {
               </View>
               <View className="flex flex-row items-center justify-between border-y border-cosmosMutedText/10 px-4 py-7">
                 <View>
-                  <Text className="text-lg">Favorit Photo</Text>
+                  <Text className="text-lg">Favorite Photo</Text>
                   <Text className="text-sm text-cosmosMutedText">
                     Mark this photo as one of your favorits
                   </Text>
