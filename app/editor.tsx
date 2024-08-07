@@ -87,7 +87,8 @@ export default function EditorScreen() {
 
                 <MotiView
                   animate={{
-                    height: tagsExpanded ? 400 : 0,
+                    maxHeight: tagsExpanded ? 400 : 0,
+                    height: "auto",
                     overflow: "hidden",
                   }}
                   transition={{
