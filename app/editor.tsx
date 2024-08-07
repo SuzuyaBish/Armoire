@@ -79,6 +79,7 @@ export default function EditorScreen() {
                         },
                       ],
                     }}
+                    transition={{ duration: 150, type: "timing" }}
                   >
                     <ChevronDownIcon size={26} color="white" />
                   </MotiView>
