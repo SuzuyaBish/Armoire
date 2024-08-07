@@ -119,10 +119,10 @@ export default function EditorScreen() {
                                     ? green
                                     : muted,
                                 }}
-                                className="mb-3 flex flex-row items-center rounded-full border px-3 py-2"
+                                className="mb-3 flex flex-row items-center rounded-full border"
                               >
                                 <Pressable
-                                  className="flex flex-row items-center"
+                                  className="flex flex-row items-center px-3 py-2"
                                   onPress={() => {
                                     const tags = JSON.parse(piece.tags!)
 
