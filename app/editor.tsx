@@ -3,16 +3,20 @@ import { Switch } from "@/components/ui/switch"
 import { defaultTags } from "@/constants/default_tags"
 import { getPieceById } from "@/lib/api/pieces/queries"
 import { ViewerPageProps } from "@/lib/types/viewer-page"
+import { cn } from "@/lib/utils"
+import { AnimatePresence } from "@legendapp/motion"
+import Color from "color"
 import { Image } from "expo-image"
 import { useLocalSearchParams } from "expo-router"
-import { CheckIcon, ChevronRightIcon } from "lucide-react-native"
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "lucide-react-native"
+import { MotiView } from "moti/build"
 import React, { useState } from "react"
-import { View } from "react-native"
-import Animated, {
-  FadeIn,
-  FadeOut,
-  LinearTransition,
-} from "react-native-reanimated"
+import { Pressable, ScrollView, View } from "react-native"
+import { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import useSWR from "swr"
 
@@ -23,6 +27,11 @@ export default function EditorScreen() {
   const { data } = useSWR(id, fetcher)
 
   const [piece, setPiece] = useState(data!.piece)
+  const [tagsExpanded, setTagsExpanded] = useState(false)
+
+  const green = "#7FA45A"
+  const fadedGreen = Color(green).alpha(0.1).toString()
+  const muted = "#333"
 
   return (
     <ParentView
@@ -46,52 +55,119 @@ export default function EditorScreen() {
                 }}
               />
             </View>
-            <View className="gap-y-3 px-4">
-              <Text className="text-cosmosMutedText">Image Tags</Text>
-              <Animated.View
-                className="flex flex-row flex-wrap gap-2"
-                layout={LinearTransition}
-              >
-                {defaultTags.map((item) => {
-                  return (
-                    <Animated.View
-                      layout={LinearTransition}
-                      onTouchEnd={() => {
-                        const tags = JSON.parse(piece.tags!)
-
-                        if (tags.includes(item)) {
-                          setPiece({
-                            ...piece,
-                            tags: JSON.stringify(
-                              tags.filter((tag: string) => tag !== item)
-                            ),
-                          })
-                        } else {
-                          setPiece({
-                            ...piece,
-                            tags: JSON.stringify([...tags, item]),
-                          })
-                        }
-                      }}
-                      className="mb-3 flex flex-row items-center rounded-full border border-muted px-3 py-2"
-                      style={{}}
-                    >
-                      <Text className="text-xs">{item}</Text>
-                      {JSON.parse(piece.tags!).includes(item) && (
-                        <Animated.View
-                          entering={FadeIn.duration(350)}
-                          exiting={FadeOut}
-                          className="ml-2 flex size-7 items-center justify-center rounded-full bg-white"
-                        >
-                          <CheckIcon size={16} color="green" />
-                        </Animated.View>
-                      )}
-                    </Animated.View>
-                  )
-                })}
-              </Animated.View>
-            </View>
             <View className="">
+              <View className="flex flex-col overflow-hidden">
+                <Pressable
+                  onPress={() => setTagsExpanded(!tagsExpanded)}
+                  className={cn(
+                    "flex flex-row items-center justify-between border-cosmosMutedText/10 px-4 py-7",
+                    tagsExpanded ? "border-y" : "border-t"
+                  )}
+                >
+                  <View>
+                    <Text className="text-lg">Edit Tags</Text>
+
+                    <Text className="text-sm text-cosmosMutedText">
+                      Add or remove tags from this photo
+                    </Text>
+                  </View>
+                  <MotiView
+                    animate={{
+                      transform: [
+                        {
+                          rotate: tagsExpanded ? "180deg" : "0deg",
+                        },
+                      ],
+                    }}
+                  >
+                    <ChevronDownIcon size={26} color="white" />
+                  </MotiView>
+                </Pressable>
+
+                <MotiView
+                  animate={{
+                    height: tagsExpanded ? 400 : 0,
+                    overflow: "hidden",
+                  }}
+                  transition={{
+                    type: "timing",
+                    duration: 150,
+                  }}
+                >
+                  <AnimatePresence>
+                    <ScrollView>
+                      {tagsExpanded && (
+                        <MotiView className="my-5 flex flex-row flex-wrap gap-2 overflow-hidden px-4">
+                          {defaultTags.map((item) => {
+                            return (
+                              <MotiView
+                                key={item}
+                                layout={LinearTransition}
+                                from={{ opacity: 0, scale: 0.9 }}
+                                animate={{
+                                  opacity: 1,
+                                  scale: 1,
+                                  backgroundColor: JSON.parse(
+                                    piece.tags!
+                                  ).includes(item)
+                                    ? fadedGreen
+                                    : "transparent",
+                                  borderColor: JSON.parse(piece.tags!).includes(
+                                    item
+                                  )
+                                    ? green
+                                    : muted,
+                                }}
+                                className="mb-3 flex flex-row items-center rounded-full border px-3 py-2"
+                              >
+                                <Pressable
+                                  className="flex flex-row items-center"
+                                  onPress={() => {
+                                    const tags = JSON.parse(piece.tags!)
+
+                                    if (tags.includes(item)) {
+                                      setPiece({
+                                        ...piece,
+                                        tags: JSON.stringify(
+                                          tags.filter(
+                                            (tag: string) => tag !== item
+                                          )
+                                        ),
+                                      })
+                                    } else {
+                                      setPiece({
+                                        ...piece,
+                                        tags: JSON.stringify([...tags, item]),
+                                      })
+                                    }
+                                  }}
+                                >
+                                  <View className="flex h-5 items-center justify-center">
+                                    <Text className="text-xs">{item}</Text>
+                                  </View>
+
+                                  <AnimatePresence>
+                                    {JSON.parse(piece.tags!).includes(item) && (
+                                      <MotiView
+                                        entering={FadeIn.duration(350)}
+                                        exiting={FadeOut}
+                                        className="ml-2 flex size-5 items-center justify-center rounded-full"
+                                        style={{ backgroundColor: green }}
+                                      >
+                                        <CheckIcon size={14} color="black" />
+                                      </MotiView>
+                                    )}
+                                  </AnimatePresence>
+                                </Pressable>
+                              </MotiView>
+                            )
+                          })}
+                        </MotiView>
+                      )}
+                    </ScrollView>
+                  </AnimatePresence>
+                </MotiView>
+              </View>
               <View className="flex flex-row items-center justify-between border-y border-cosmosMutedText/10 px-4 py-7">
                 <View>
                   <Text className="text-lg">Favorit Photo</Text>
@@ -102,7 +178,7 @@ export default function EditorScreen() {
                 <Switch
                   value={piece.favorited!}
                   trackColor={{
-                    true: "green",
+                    true: green,
                     false: "#1D1D1D",
                   }}
                   onChange={(e) => {
@@ -120,7 +196,7 @@ export default function EditorScreen() {
                 <Switch
                   value={piece.archived!}
                   trackColor={{
-                    true: "green",
+                    true: green,
                     false: "#1D1D1D",
                   }}
                   onChange={(e) => {

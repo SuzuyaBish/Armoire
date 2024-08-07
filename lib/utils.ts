@@ -111,3 +111,7 @@ export const calculateTranslation = (index: number, length: number) => {
     },
   }
 }
+
+export const arrayItemInArray = (array1: string[], array2: string[]) => {
+  return array1.some((item) => array2.includes(item))
+}
