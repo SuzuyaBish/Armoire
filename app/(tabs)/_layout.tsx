@@ -103,9 +103,21 @@ export default function TabLayout() {
                   className="flex w-full flex-row items-center bg-cosmosMuted"
                   style={{ height: 64 }}
                 >
-                  <ImagePicker />
-                  <PhotoTaker />
-                  <CollectionCreator />
+                  <ImagePicker
+                    onDone={(done) =>
+                      done && bottomSheetModalRef.current?.dismiss()
+                    }
+                  />
+                  <PhotoTaker
+                    onDone={(done) =>
+                      done && bottomSheetModalRef.current?.dismiss()
+                    }
+                  />
+                  <CollectionCreator
+                    onDone={(done) =>
+                      done && bottomSheetModalRef.current?.dismiss()
+                    }
+                  />
                 </BottomSheetView>
               </BottomSheetModal>
             </TouchableOpacity>

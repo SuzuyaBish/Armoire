@@ -8,11 +8,15 @@ import { Image as DefaultImage, Pressable } from "react-native"
 import { useSWRConfig } from "swr"
 import { Text } from "./StyledComponents"
 
-export default function ImagePicker() {
+type ImagePickerProps = {
+  onDone: (done: boolean) => void
+}
+
+export default function ImagePicker({ onDone }: ImagePickerProps) {
   const { mutate } = useSWRConfig()
 
   const pickMedia = async () => {
-    let result = await launchImageLibraryAsync({
+    const result = await launchImageLibraryAsync({
       mediaTypes: MediaTypeOptions.Images,
       quality: 1,
       allowsMultipleSelection: true,
@@ -46,7 +50,9 @@ export default function ImagePicker() {
       }
 
       notificationAsync(NotificationFeedbackType.Success)
+      onDone(true)
     }
+    onDone(false)
   }
   return (
     <Pressable

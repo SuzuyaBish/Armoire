@@ -14,13 +14,17 @@ import { useSWRConfig } from "swr"
 import { Text } from "./StyledComponents"
 import { Toast, useToast } from "./ui/toast"
 
+type CollectionCreatorProps = {
+  trigger?: React.ReactNode
+  className?: string
+  onDone?: (done: boolean) => void
+}
+
 export default function CollectionCreator({
   trigger,
   className,
-}: {
-  trigger?: React.ReactNode
-  className?: string
-}) {
+  onDone,
+}: CollectionCreatorProps) {
   const toast = useToast()
   const bottomSheetRef = useRef<BottomSheetModal>(null)
   const { mutate } = useSWRConfig()
@@ -129,6 +133,7 @@ export default function CollectionCreator({
                       mutate("collections")
                       handleToast()
                       setName("")
+                      onDone && onDone(true)
                       bottomSheetRef.current?.dismiss()
                     }
                   })

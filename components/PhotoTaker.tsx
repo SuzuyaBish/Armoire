@@ -19,10 +19,14 @@ import { Pressable, TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
 
+type ImagePickerProps = {
+  onDone: (done: boolean) => void
+}
+
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj["
 
-export default function PhotoTaker() {
+export default function PhotoTaker({ onDone }: ImagePickerProps) {
   const insets = useSafeAreaInsets()
   const { mutate } = useSWRConfig()
   const bottomSheetRef = useRef<BottomSheetModal>(null)
@@ -130,6 +134,7 @@ export default function PhotoTaker() {
                       mutate("pieces")
                       impactAsync(ImpactFeedbackStyle.Medium)
                       setImage(undefined)
+                      onDone(true)
                       bottomSheetRef.current?.dismiss()
                     }}
                   >
@@ -148,6 +153,7 @@ export default function PhotoTaker() {
                       onPress={() => {
                         setImage(undefined)
                         bottomSheetRef.current?.dismiss()
+                        onDone(false)
                       }}
                     >
                       <XIcon color="white" />
