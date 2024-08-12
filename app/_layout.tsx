@@ -1,4 +1,3 @@
-import { Text } from "@/components/StyledComponents"
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider"
 import { db } from "@/lib/db"
 import migrations from "@/lib/db/migrations/migrations"
@@ -7,9 +6,8 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
 import { useFonts } from "expo-font"
 import { Stack, useRouter } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
-import { ArrowLeftIcon } from "lucide-react-native"
+import { StatusBar } from "expo-status-bar"
 import { useEffect } from "react"
-import { TouchableOpacity, View } from "react-native"
 import "react-native-gesture-handler"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import "react-native-reanimated"
@@ -58,6 +56,7 @@ function RootLayoutNav() {
         <GluestackUIProvider mode="dark">
           <Stack
             screenOptions={{
+              headerShown: false,
               headerTintColor: "#fff",
               headerBackVisible: false,
               headerBackTitleVisible: false,
@@ -67,59 +66,11 @@ function RootLayoutNav() {
               },
             }}
           >
-            <Stack.Screen
-              name="(tabs)"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="viewer"
-              options={{
-                headerLeft: () => {
-                  return (
-                    <TouchableOpacity
-                      onPress={() => router.back()}
-                      onLongPress={() => router.dismissAll()}
-                    >
-                      <ArrowLeftIcon />
-                    </TouchableOpacity>
-                  )
-                },
-                headerTitle: ({ children }) => {
-                  return (
-                    <View className="rounded-full bg-cosmosMuted px-4 py-2">
-                      <Text>{children}</Text>
-                    </View>
-                  )
-                },
-              }}
-            />
-
-            <Stack.Screen
-              name="editor"
-              options={{
-                headerShown: false,
-                headerLeft: () => {
-                  return (
-                    <TouchableOpacity
-                      onPress={() => router.back()}
-                      onLongPress={() => router.dismissAll()}
-                    >
-                      <ArrowLeftIcon />
-                    </TouchableOpacity>
-                  )
-                },
-                headerTitle: () => {
-                  return (
-                    <Text family="fancy" className="text-2xl">
-                      Edit Photo
-                    </Text>
-                  )
-                },
-              }}
-            />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="viewer" />
+            <Stack.Screen name="editor" />
           </Stack>
+          <StatusBar style="light" />
         </GluestackUIProvider>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>

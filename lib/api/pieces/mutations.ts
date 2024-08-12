@@ -83,3 +83,17 @@ export const multiDeletePiece = async (pieces: Piece[]) => {
     throw { error: message }
   }
 }
+
+export const multiUnarchivePiece = async (pieces: Piece[]) => {
+  try {
+    for (const piece of pieces) {
+      await updatePiece(piece.id, { ...piece, archived: false })
+    }
+
+    return { pieces: [] }
+  } catch (err) {
+    const message = (err as Error).message ?? "Error, please try again"
+    console.error(message)
+    throw { error: message }
+  }
+}

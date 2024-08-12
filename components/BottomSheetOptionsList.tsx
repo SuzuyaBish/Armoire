@@ -7,6 +7,7 @@ export type BottomSheetOptionItem = {
   icon: JSX.Element
   text: string
   onPress: () => void
+  shown?: boolean
 }
 
 interface BottomSheetOptionsListProps {
@@ -23,25 +24,31 @@ const BottomSheetOptionsList: FC<BottomSheetOptionsListProps> = ({
 }) => {
   return (
     <View className="flex flex-col">
-      {items.map((item, index) => {
-        return (
-          <Pressable
-            onPress={item.onPress}
-            key={index}
-            className={cn(
-              "flex flex-row items-center justify-between bg-muted px-7 py-4",
-              index === 0 && "rounded-t-2xl border-b border-cosmosMutedText/10",
-              index === items.length - 1 && "rounded-b-2xl",
-              index !== 0 &&
-                index !== items.length - 1 &&
-                "border-b border-cosmosMutedText/10"
-            )}
-          >
-            <Text className="text-lg">{item.text}</Text>
-            {item.icon}
-          </Pressable>
-        )
-      })}
+      {items
+        .filter((item) => item.shown || item.shown === undefined)
+        .map((item, index) => {
+          const itemsLength = items.filter(
+            (item) => item.shown || item.shown === undefined
+          ).length
+          return (
+            <Pressable
+              onPress={item.onPress}
+              key={index}
+              className={cn(
+                "flex flex-row items-center justify-between bg-muted px-7 py-4",
+                index === 0 &&
+                  "rounded-t-2xl border-b border-cosmosMutedText/10",
+                index === itemsLength - 1 && "rounded-b-2xl",
+                index !== 0 &&
+                  index !== itemsLength - 1 &&
+                  "border-b border-cosmosMutedText/10"
+              )}
+            >
+              <Text className="text-lg">{item.text}</Text>
+              {item.icon}
+            </Pressable>
+          )
+        })}
       <View className="mt-5">
         {otherItems &&
           otherItems.map((item, index) => {

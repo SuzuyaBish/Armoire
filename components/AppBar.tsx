@@ -27,10 +27,16 @@ const AppBar: FC<AppBarProps> = ({ ...props }) => {
         <>{props.children}</>
       ) : (
         <View className="flex w-full flex-row items-center justify-between px-4">
-          {props.hasBackButton && (
-            <Pressable onPress={() => router.back()} style={{ width: "20%" }}>
+          {props.hasBackButton ? (
+            <Pressable
+              onPress={() => router.back()}
+              onLongPress={() => router.dismissAll()}
+              style={{ width: "20%" }}
+            >
               <ArrowLeft size={26} color="white" />
             </Pressable>
+          ) : (
+            <View style={{ width: "20%" }} />
           )}
           <View
             className="flex items-center justify-center"

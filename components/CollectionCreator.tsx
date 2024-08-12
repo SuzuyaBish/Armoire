@@ -16,8 +16,10 @@ import { Toast, useToast } from "./ui/toast"
 
 export default function CollectionCreator({
   trigger,
+  className,
 }: {
   trigger?: React.ReactNode
+  className?: string
 }) {
   const toast = useToast()
   const bottomSheetRef = useRef<BottomSheetModal>(null)
@@ -69,6 +71,7 @@ export default function CollectionCreator({
         </Pressable>
       ) : (
         <Pressable
+          className={className}
           onPress={() => {
             selectionAsync()
             bottomSheetRef.current?.present()
@@ -86,6 +89,7 @@ export default function CollectionCreator({
           overflow: "hidden",
         }}
         handleComponent={null}
+        android_keyboardInputMode="adjustResize"
         backdropComponent={(e) => {
           return (
             <BottomSheetBackdrop

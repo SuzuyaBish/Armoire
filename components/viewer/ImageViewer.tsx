@@ -16,6 +16,7 @@ import Animated, {
 } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import useSWR from "swr"
+import CollectionCreator from "../CollectionCreator"
 
 interface ImageViewerProps {
   data: Piece
@@ -101,13 +102,18 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
         style={[
           scrollStyleControls,
           {
-            bottom: insets.bottom + 70,
+            bottom: insets.bottom + 50,
           },
         ]}
       >
-        <View className="flex h-14 w-[40%] items-center justify-center rounded-full bg-white">
-          <PlusIcon color="black" />
-        </View>
+        <CollectionCreator
+          className="w-[40%]"
+          trigger={
+            <View className="flex h-14 w-full items-center justify-center rounded-full bg-white">
+              <PlusIcon color="black" />
+            </View>
+          }
+        />
         <TouchableOpacity
           onPress={() => {
             router.push({

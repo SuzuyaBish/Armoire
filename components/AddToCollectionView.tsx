@@ -13,12 +13,10 @@ import { Text } from "./StyledComponents"
 
 interface AddToCollectionViewProps {
   selectedPiece: Piece
-  close: () => void
 }
 
 const AddToCollectionView: FC<AddToCollectionViewProps> = ({
   selectedPiece,
-  close,
 }) => {
   const insets = useSafeAreaInsets()
   const { mutate } = useSWRConfig()

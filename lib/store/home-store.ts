@@ -3,7 +3,8 @@ import { Piece } from "../db/schema/pieces"
 
 interface HomeStore {
   isSelecting: boolean
-  setIsSelecting: (isSelecting: boolean) => void
+  isInArchive: boolean
+  setIsSelecting: (isSelecting: boolean, isInArchive?: boolean) => void
   selectedPieces: Piece[]
   setSelectedPieces: (pieces: Piece[]) => void
 }
@@ -11,6 +12,13 @@ interface HomeStore {
 export const useHomeStore = create<HomeStore>((set) => ({
   isSelecting: false,
   selectedPieces: [],
-  setIsSelecting: (isSelecting) => set({ isSelecting }),
+  isInArchive: false,
+  setIsSelecting: (isSelecting, isInArchive) => {
+    if (isInArchive !== undefined) {
+      set({ isSelecting, isInArchive })
+    } else {
+      set({ isSelecting })
+    }
+  },
   setSelectedPieces: (pieces) => set({ selectedPieces: pieces }),
 }))

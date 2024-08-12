@@ -116,7 +116,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
       >
         <BottomSheetView
           className="px-5 pt-3"
-          style={{ paddingBottom: insets.bottom }}
+          style={{ paddingBottom: insets.bottom + 20 }}
         >
           <BottomSheetOptionsList
             roundBottom={false}
@@ -124,6 +124,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
               {
                 icon: <StarsIcon color="#D0D0D0" size={20} />,
                 text: piece.favorited ? "Unfavorite Photo" : "Favorite Photo",
+                shown: !piece.archived,
                 onPress: async () => {
                   const updatedPiece: UpdatePieceParams = {
                     id: piece.id!,
@@ -146,7 +147,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
                 icon: <MousePointerClickIcon color="#D0D0D0" size={20} />,
                 text: "Select Photo",
                 onPress: () => {
-                  homeStore.setIsSelecting(true)
+                  homeStore.setIsSelecting(true, piece.archived!)
                   homeStore.setSelectedPieces([piece])
                   bottomSheetRef.current?.dismiss()
                 },
@@ -154,11 +155,12 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
               {
                 icon: <FolderPlusIcon color="#D0D0D0" size={20} />,
                 text: "Add to Collection",
+                shown: !piece.archived,
                 onPress: () => collectionRef.current?.present(),
               },
               {
                 icon: <ArchiveIcon color="#D0D0D0" size={20} />,
-                text: "Archive Photo",
+                text: piece.archived ? "Unarchive Photo" : "Archive Photo",
                 onPress: async () => {
                   const updatedPiece: UpdatePieceParams = {
                     id: piece.id!,
@@ -172,6 +174,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
 
                   await updatePiece(piece.id!, updatedPiece)
                   mutate("pieces")
+                  mutate("archived")
                   bottomSheetRef.current?.dismiss()
 
                   notificationAsync(NotificationFeedbackType.Success)
