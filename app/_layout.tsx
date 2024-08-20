@@ -4,7 +4,7 @@ import migrations from "@/lib/db/migrations/migrations"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
 import { useFonts } from "expo-font"
-import { Stack, useRouter } from "expo-router"
+import { Stack } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import { StatusBar } from "expo-status-bar"
 import { useEffect } from "react"
@@ -49,7 +49,6 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const router = useRouter()
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
@@ -68,7 +67,7 @@ function RootLayoutNav() {
           >
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="viewer" />
-            <Stack.Screen name="editor" />
+            <Stack.Screen name="(editor)" />
           </Stack>
           <StatusBar style="light" />
         </GluestackUIProvider>

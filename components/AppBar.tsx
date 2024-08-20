@@ -22,7 +22,7 @@ type AppBarProps = {} & (AppBarWithChildren | AppBarWithoutChildren)
 const AppBar: FC<AppBarProps> = ({ ...props }) => {
   const router = useRouter()
   return (
-    <View className="mb-6 mt-3 flex flex-row items-center justify-between">
+    <View className="mb-6 mt-3 flex h-10 flex-row items-center justify-between">
       {props.custom ? (
         <>{props.children}</>
       ) : (

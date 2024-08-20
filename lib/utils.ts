@@ -137,3 +137,13 @@ export const generateDialogText = (type: DialogTypes) => {
     body: "Deleting the photo cannot be undone. Make sure you have it saved to your gallery before deleting.",
   }
 }
+
+export const removeDuplicatesFromArrays = (
+  array1: string[],
+  array2: string[]
+) => {
+  const combined = [...array1, ...array2]
+  const unique = Array.from(new Set(combined))
+
+  return unique
+}

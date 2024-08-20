@@ -117,7 +117,7 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
         <TouchableOpacity
           onPress={() => {
             router.push({
-              pathname: "/editor",
+              pathname: "/(editor)/",
               params: { id: data.id },
             })
           }}
