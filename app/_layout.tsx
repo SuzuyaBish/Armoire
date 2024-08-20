@@ -24,11 +24,13 @@ SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
   const { success, error: dbError } = useMigrations(db, migrations)
   const [loaded, error] = useFonts({
-    favoritRegular: require("../assets/fonts/favorit/Favorit-Regular.ttf"),
-    favoritLight: require("../assets/fonts/favorit/Favorit-Light.ttf"),
-    favoritMedium: require("../assets/fonts/favorit/Favorit-Medium.ttf"),
-    favoritBold: require("../assets/fonts/favorit/Favorit-Bold.ttf"),
-    gtSuper: require("../assets/fonts/gt-super/GTSuperDisplay-Light.ttf"),
+    familyRegular: require("../assets/fonts/family/Family Regular.ttf"),
+    familyMedium: require("../assets/fonts/family/Family Medium.ttf"),
+    familySemiBold: require("../assets/fonts/family/Family SemiBold.ttf"),
+    lfeRegular: require("../assets/fonts/family/LFESans Regular.ttf"),
+    lfeMedium: require("../assets/fonts/family/LFESans Medium.ttf"),
+    lfeSemiBold: require("../assets/fonts/family/LFESans SemiBold.ttf"),
+    lfeBold: require("../assets/fonts/family/LFESans Bold.ttf"),
   })
 
   useEffect(() => {
@@ -69,7 +71,7 @@ function RootLayoutNav() {
             <Stack.Screen name="viewer" />
             <Stack.Screen name="(editor)" />
           </Stack>
-          <StatusBar style="light" />
+          <StatusBar style="dark" />
         </GluestackUIProvider>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>

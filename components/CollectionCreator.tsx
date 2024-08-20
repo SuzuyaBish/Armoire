@@ -6,11 +6,16 @@ import {
   BottomSheetTextInput,
   BottomSheetView,
 } from "@gorhom/bottom-sheet"
+import { AnimatePresence } from "@legendapp/motion"
 import { selectionAsync } from "expo-haptics"
-import { SaveIcon, XIcon } from "lucide-react-native"
+import { SaveIcon } from "lucide-react-native"
+import { MotiView } from "moti"
 import React, { useRef, useState } from "react"
-import { Pressable, TouchableOpacity, View } from "react-native"
+import { Pressable } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
+import AnimatedPressable from "./AnimatedPressable"
+import SheetHeader from "./SheetHeader"
 import { Text } from "./StyledComponents"
 import { Toast, useToast } from "./ui/toast"
 
@@ -26,6 +31,7 @@ export default function CollectionCreator({
   onDone,
 }: CollectionCreatorProps) {
   const toast = useToast()
+  const insets = useSafeAreaInsets()
   const bottomSheetRef = useRef<BottomSheetModal>(null)
   const { mutate } = useSWRConfig()
 
@@ -71,7 +77,7 @@ export default function CollectionCreator({
           style={{ width: windowWidth / 3 - 10 }}
           className="flex h-full items-center justify-center"
         >
-          <Text>Collection</Text>
+          <Text className="text-accent">Collection</Text>
         </Pressable>
       ) : (
         <Pressable
@@ -87,71 +93,75 @@ export default function CollectionCreator({
 
       <BottomSheetModal
         ref={bottomSheetRef}
-        enableDynamicSizing
+        detached
+        bottomInset={insets.bottom + 60}
+        snapPoints={["22%"]}
         style={{
-          borderRadius: 24,
+          marginHorizontal: 14,
+          marginBottom: 60,
+          borderRadius: 30,
           overflow: "hidden",
         }}
         handleComponent={null}
-        android_keyboardInputMode="adjustResize"
         backdropComponent={(e) => {
           return (
             <BottomSheetBackdrop
               onPress={() => bottomSheetRef.current?.dismiss()}
               appearsOnIndex={0}
               disappearsOnIndex={-1}
-              style={[e.style, { backgroundColor: "rgba(0,0,0,0.6)" }]}
+              style={[e.style, { backgroundColor: "rgba(0,0,0,0.7)" }]}
               animatedIndex={e.animatedIndex}
               animatedPosition={e.animatedPosition}
             />
           )
         }}
-        backgroundStyle={{ backgroundColor: "#191919" }}
+        backgroundStyle={{ backgroundColor: "#FFFFFE" }}
       >
-        <BottomSheetView>
-          <View className="flex flex-row items-center justify-between border-b border-muted px-7 py-5">
-            <TouchableOpacity
-              className="flex size-11 items-center justify-center rounded-full bg-muted"
-              onPress={() => bottomSheetRef.current?.dismiss()}
-            >
-              <XIcon size={18} color="white" />
-            </TouchableOpacity>
-            <Text family="fancy" className="text-2xl">
-              New Collection
-            </Text>
-            {name === "" ? (
-              <View className="flex size-11 items-center justify-center rounded-full bg-transparent" />
-            ) : (
-              <TouchableOpacity
-                className="flex size-11 items-center justify-center rounded-full bg-muted"
-                onPress={async () => {
-                  await createCollection({
-                    title: name,
-                    coverImage: "",
-                  }).then((v) => {
-                    if (v.collection.id) {
-                      mutate("collections")
-                      handleToast()
-                      setName("")
-                      onDone && onDone(true)
-                      bottomSheetRef.current?.dismiss()
-                    }
-                  })
-                }}
-              >
-                <SaveIcon size={18} color="white" />
-              </TouchableOpacity>
-            )}
-          </View>
-          <View className="p-4">
-            <BottomSheetTextInput
-              placeholder="Name*"
-              autoFocus
-              className="rounded-full bg-muted p-5 text-white placeholder:text-cosmosMutedText"
-              value={name}
-              onChange={(e) => setName(e.nativeEvent.text)}
-            />
-          </View>
+        <BottomSheetView
+          className="px-8"
+          style={{ paddingBottom: insets.bottom }}
+        >
+          <SheetHeader
+            title="Create Collection"
+            close={() => bottomSheetRef.current?.dismiss()}
+            actions={
+              <AnimatePresence>
+                {name.length > 0 && (
+                  <AnimatedPressable
+                    onPress={async () => {
+                      await createCollection({
+                        title: name,
+                        coverImage: "",
+                      }).then((v) => {
+                        if (v.collection.id) {
+                          mutate("collections")
+                          handleToast()
+                          setName("")
+                          onDone && onDone(true)
+                          bottomSheetRef.current?.dismiss()
+                        }
+                      })
+                    }}
+                  >
+                    <MotiView
+                      from={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="rounded-full bg-muted p-1.5"
+                    >
+                      <SaveIcon color="#494849" size={20} />
+                    </MotiView>
+                  </AnimatedPressable>
+                )}
+              </AnimatePresence>
+            }
+          />
+          <BottomSheetTextInput
+            placeholder="Name*"
+            autoFocus
+            className="rounded-full bg-muted p-5 text-accent placeholder:text-mutedForeground"
+            value={name}
+            onChange={(e) => setName(e.nativeEvent.text)}
+          />
         </BottomSheetView>
       </BottomSheetModal>
     </>

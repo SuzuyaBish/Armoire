@@ -3,22 +3,23 @@ import { updatePiece } from "@/lib/api/pieces/mutations"
 import { Piece, UpdatePieceParams } from "@/lib/db/schema/pieces"
 import { NotificationFeedbackType, notificationAsync } from "expo-haptics"
 import { Image } from "expo-image"
-import { PlusCircleIcon, PlusIcon, XCircleIcon } from "lucide-react-native"
+import { PlusIcon, XIcon } from "lucide-react-native"
 import { FC } from "react"
-import { TouchableOpacity, View } from "react-native"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { ScrollView, TouchableOpacity, View } from "react-native"
 import useSWR, { useSWRConfig } from "swr"
 import CollectionCreator from "./CollectionCreator"
+import SheetHeader from "./SheetHeader"
 import { Text } from "./StyledComponents"
 
 interface AddToCollectionViewProps {
   selectedPiece: Piece
+  close: () => void
 }
 
 const AddToCollectionView: FC<AddToCollectionViewProps> = ({
   selectedPiece,
+  close,
 }) => {
-  const insets = useSafeAreaInsets()
   const { mutate } = useSWRConfig()
   const parsedCollections = JSON.parse(selectedPiece.collections) as string[]
 
@@ -28,27 +29,21 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
     mutate: collectionsMutate,
   } = useSWR("collections", getAllCollectionsWithFirstPiece)
   return (
-    <View
-      style={{
-        marginBottom: insets.bottom,
-      }}
-    >
-      <View className="flex flex-row items-center justify-between border-b border-muted px-7 pb-3 pt-2">
-        <View>
-          <PlusIcon color="transparent" />
-        </View>
-        <Text className="text-2xl" family="fancy">
-          Connect
-        </Text>
-        <CollectionCreator
-          trigger={
-            <View className="p-2">
-              <PlusIcon color="#AAAAAA" />
-            </View>
-          }
-        />
-      </View>
-      <View className="p-7">
+    <View>
+      <SheetHeader
+        title="Add to Collection"
+        close={close}
+        actions={
+          <CollectionCreator
+            trigger={
+              <View className="rounded-full bg-muted p-1.5">
+                <PlusIcon color="#494849" size={20} />
+              </View>
+            }
+          />
+        }
+      />
+      <ScrollView>
         {!isLoading && data && data.allData && data.allData.length > 0 ? (
           <View className="gap-y-5">
             {data.allData.map((collection) => {
@@ -93,10 +88,10 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
                       notificationAsync(NotificationFeedbackType.Success)
                     }
                   }}
-                  className="flex flex-row items-center justify-between"
+                  className="flex flex-row items-center justify-between rounded-2xl bg-muted p-3"
                 >
                   <View className="flex flex-row items-center gap-x-4">
-                    <View className="flex size-14 items-center justify-center">
+                    <View className="flex size-14 items-center justify-center overflow-hidden rounded-lg">
                       {collection.piecesData.length > 0 ? (
                         <Image
                           contentFit="cover"
@@ -108,34 +103,26 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
                           }}
                         />
                       ) : (
-                        <View className="size-full bg-muted" />
+                        <View className="size-full bg-mutedForeground/50" />
                       )}
                     </View>
                     <View className="flex flex-col">
-                      <Text className="text-lg">{collection.title}</Text>
-                      <Text className="text-sm text-cosmosMutedText">
+                      <Text className="text-lg" family="lfeSemiBold">
+                        {collection.title}
+                      </Text>
+                      <Text className="text-sm text-mutedForeground">
                         {collection.piecesData.length} Photos
                       </Text>
                     </View>
                   </View>
                   {parsedCollections.includes(collection.id) ? (
-                    <XCircleIcon color="#AAAAAA" />
+                    <XIcon color="#AAAAAA" />
                   ) : (
-                    <PlusCircleIcon color="#AAAAAA" />
+                    <PlusIcon color="#AAAAAA" />
                   )}
                 </TouchableOpacity>
               )
             })}
-            <CollectionCreator
-              trigger={
-                <View className="flex flex-row items-center gap-x-4">
-                  <View className="flex size-14 items-center justify-center bg-white">
-                    <PlusIcon color="black" />
-                  </View>
-                  <Text className="text-lg">New Collection</Text>
-                </View>
-              }
-            />
           </View>
         ) : (
           <CollectionCreator
@@ -149,7 +136,7 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
             }
           />
         )}
-      </View>
+      </ScrollView>
     </View>
   )
 }

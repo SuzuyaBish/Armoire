@@ -1,7 +1,9 @@
 export type FontType =
-  | "light"
-  | "regular"
-  | "medium"
-  | "bold"
-  | "fancy"
+  | "familyRegular"
+  | "familyMedium"
+  | "familySemiBold"
+  | "lfeRegular"
+  | "lfeMedium"
+  | "lfeSemiBold"
+  | "lfeBold"
   | undefined

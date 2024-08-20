@@ -109,8 +109,8 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
         <CollectionCreator
           className="w-[40%]"
           trigger={
-            <View className="flex h-14 w-full items-center justify-center rounded-full bg-white">
-              <PlusIcon color="black" />
+            <View className="flex h-14 w-full items-center justify-center rounded-full bg-accent">
+              <PlusIcon color="white" />
             </View>
           }
         />
@@ -121,9 +121,9 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
               params: { id: data.id },
             })
           }}
-          className="flex size-14 items-center justify-center rounded-full bg-cosmosMuted"
+          className="bg-cosmosMuted flex size-14 items-center justify-center rounded-full"
         >
-          <Edit2Icon color="white" />
+          <Edit2Icon color="#242424" />
         </TouchableOpacity>
       </Animated.View>
       <Animated.ScrollView

@@ -6,6 +6,7 @@ import { ParentView, Text } from "@/components/StyledComponents"
 import { Switch } from "@/components/ui/switch"
 import { deletePiece, updatePiece } from "@/lib/api/pieces/mutations"
 import { getPieceById } from "@/lib/api/pieces/queries"
+import { Piece } from "@/lib/db/schema/pieces"
 import { ViewerPageProps } from "@/lib/types/viewer-page"
 import { Image } from "expo-image"
 import { useLocalSearchParams, useRouter } from "expo-router"
@@ -19,10 +20,14 @@ export default function EditorScreen() {
   const { mutate } = useSWRConfig()
   const insets = useSafeAreaInsets()
   const { id } = useLocalSearchParams() as ViewerPageProps
-  const fetcher = async () => await getPieceById(id)
+  const fetcher = async () => {
+    const data = await getPieceById(id)
+    setPiece(data.piece)
+    return data
+  }
   const { data, mutate: currentPieceMutate } = useSWR(id, fetcher)
 
-  const [piece, setPiece] = useState(data!.piece)
+  const [piece, setPiece] = useState<Piece>()
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const green = "#7FA45A"

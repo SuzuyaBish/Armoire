@@ -1,3 +1,4 @@
+import CollectionCreator from "@/components/CollectionCreator"
 import Image from "@/components/Image"
 import SelectionBar from "@/components/SelectionBar"
 import { ParentView, Text } from "@/components/StyledComponents"
@@ -9,8 +10,9 @@ import { AnimatePresence } from "@legendapp/motion"
 import MasonryList from "@react-native-seoul/masonry-list"
 import { MotiView } from "moti/build"
 import { useRef, useState } from "react"
-import { TouchableOpacity, View } from "react-native"
+import { ScrollView, TouchableOpacity, View } from "react-native"
 import PagerView from "react-native-pager-view"
+import Animated, { LinearTransition } from "react-native-reanimated"
 import useSWR from "swr"
 
 export default function TabOneScreen() {
@@ -54,12 +56,13 @@ export default function TabOneScreen() {
               onPress={() => pagerRef.current?.setPage(0)}
               className={cn(
                 "rounded-full px-6 py-3",
-                selectedPage === 0 && "bg-muted"
+                selectedPage === 0 && "bg-accent"
               )}
             >
               <Text
+                family="lfeMedium"
                 className={cn(
-                  selectedPage === 0 ? "text-white" : "text-cosmosMutedText"
+                  selectedPage === 0 ? "text-white" : "text-mutedForeground"
                 )}
               >
                 Clothes
@@ -69,15 +72,32 @@ export default function TabOneScreen() {
               onPress={() => pagerRef.current?.setPage(1)}
               className={cn(
                 "rounded-full px-6 py-3",
-                selectedPage === 1 && "bg-muted"
+                selectedPage === 1 && "bg-accent"
               )}
             >
               <Text
+                family="lfeMedium"
                 className={cn(
-                  selectedPage === 1 ? "text-white" : "text-cosmosMutedText"
+                  selectedPage === 1 ? "text-white" : "text-mutedForeground"
                 )}
               >
                 Favorites
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => pagerRef.current?.setPage(2)}
+              className={cn(
+                "rounded-full px-6 py-3",
+                selectedPage === 2 && "bg-accent"
+              )}
+            >
+              <Text
+                family="lfeMedium"
+                className={cn(
+                  selectedPage === 2 ? "text-white" : "text-mutedForeground"
+                )}
+              >
+                Archive
               </Text>
             </TouchableOpacity>
           </MotiView>
@@ -91,24 +111,27 @@ export default function TabOneScreen() {
           flex: 1,
         }}
       >
-        <View className="flex-1 overflow-visible" key="1">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="flex-1 overflow-visible"
+          key="1"
+        >
           {!isLoading && data && data?.pieces.length > 0 && (
-            <MasonryList
-              data={data.pieces}
-              keyExtractor={(item): string => item.id}
-              numColumns={2}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item, i }) => {
-                const piece = item as Piece
+            <Animated.View className="flex flex-row flex-wrap justify-between">
+              {data.pieces.map((piece, i) => {
                 return (
-                  <Image piece={piece} index={i} length={data.pieces.length} />
+                  <MotiView key={piece.id} layout={LinearTransition}>
+                    <Image
+                      piece={piece}
+                      index={i}
+                      length={data.pieces.length}
+                    />
+                  </MotiView>
                 )
-              }}
-              refreshing={isLoading}
-              onRefresh={() => mutate()}
-            />
+              })}
+            </Animated.View>
           )}
-        </View>
+        </ScrollView>
         <View key="2">
           {!isLoading &&
           data &&
@@ -129,7 +152,36 @@ export default function TabOneScreen() {
             />
           ) : (
             <View className="flex flex-1 flex-col items-center justify-center">
-              <Text className="text-3xl" family="fancy">
+              <Text className="text-3xl" family="lfeBold">
+                No Favorites
+              </Text>
+              <Text className="mt-3">You can add new favorites by holding</Text>
+              <Text>down on an image and selecting favorite image.</Text>
+            </View>
+          )}
+        </View>
+        <View key="3">
+          <CollectionCreator onDone={(done) => {}} />
+          {!isLoading &&
+          data &&
+          data?.pieces.filter((v) => v.favorited).length > 0 ? (
+            <MasonryList
+              data={data.pieces.filter((v) => v.favorited)}
+              keyExtractor={(item): string => item.id}
+              numColumns={2}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item, i }) => {
+                const piece = item as Piece
+                return (
+                  <Image piece={piece} index={i} length={data.pieces.length} />
+                )
+              }}
+              refreshing={isLoading}
+              onRefresh={() => mutate()}
+            />
+          ) : (
+            <View className="flex flex-1 flex-col items-center justify-center">
+              <Text className="text-3xl" family="lfeBold">
                 No Favorites
               </Text>
               <Text className="mt-3">You can add new favorites by holding</Text>

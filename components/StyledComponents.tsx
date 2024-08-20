@@ -13,12 +13,12 @@ interface ParentView extends React.ComponentProps<typeof DefaultView> {
   hasInsets?: boolean
 }
 
-const Text: FC<StyledText> = ({ family = "regular", ...props }) => {
+const Text: FC<StyledText> = ({ family = "familyRegular", ...props }) => {
   const fontFamily = assignFontFamily(family)
   return (
     <DefaultText
       {...props}
-      className={cn("text-white", props.className)}
+      className={cn("text-accent", props.className)}
       style={[props.style, { fontFamily }]}
     />
   )
@@ -30,7 +30,7 @@ const ParentView: FC<ParentView> = ({ hasInsets, hasPadding, ...props }) => {
     <DefaultView
       {...props}
       className={cn(
-        "flex flex-1 bg-bgColor",
+        "flex flex-1 bg-backgroundColor",
         hasPadding && "px-2 pt-6",
         props.className
       )}

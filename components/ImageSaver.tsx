@@ -8,8 +8,7 @@ import {
 } from "expo-media-library"
 import { SaveIcon } from "lucide-react-native"
 import { FC } from "react"
-import { Pressable } from "react-native"
-import { Text } from "./StyledComponents"
+import SheetMenuItem from "./SheetMenuItem"
 import { useToast } from "./ui/toast"
 
 interface ImageSaverProps extends Piece {
@@ -33,8 +32,9 @@ const ImageSaver: FC<ImageSaverProps> = ({ close, ...props }) => {
     }
   }
   return (
-    <Pressable
-      className="flex flex-row items-center justify-between rounded-2xl bg-muted px-7 py-4"
+    <SheetMenuItem
+      title="Save to Gallery"
+      icon={<SaveIcon color="#494849" size={18} />}
       onPress={async () => {
         const res = await getPermissions()
 
@@ -48,10 +48,7 @@ const ImageSaver: FC<ImageSaverProps> = ({ close, ...props }) => {
 
         close()
       }}
-    >
-      <Text className="text-lg">Save to Gallery</Text>
-      <SaveIcon color="#D0D0D0" size={20} />
-    </Pressable>
+    />
   )
 }
 

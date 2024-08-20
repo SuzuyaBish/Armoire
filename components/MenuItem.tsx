@@ -30,15 +30,15 @@ const MenuItem: FC<MenuItemProps> = ({
       }}
       className={cn(
         "flex flex-row items-center justify-between px-4 py-7",
-        props.border === "top" && "border-t border-cosmosMutedText/10",
-        props.border === "bottom" && "border-b border-cosmosMutedText/10",
-        props.border === "both" && "border-y border-cosmosMutedText/10",
+        props.border === "top" && "border-cosmosMutedText/10 border-t",
+        props.border === "bottom" && "border-cosmosMutedText/10 border-b",
+        props.border === "both" && "border-cosmosMutedText/10 border-y",
         props.border === "none" && "border-none"
       )}
     >
       <View>
         <Text className="text-lg">{title}</Text>
-        <Text className="text-sm text-cosmosMutedText">{description}</Text>
+        <Text className="text-cosmosMutedText text-sm">{description}</Text>
       </View>
       {rightItem ? rightItem : <ChevronRightIcon size={26} color="white" />}
     </Pressable>

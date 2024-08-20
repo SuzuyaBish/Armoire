@@ -33,7 +33,7 @@ const AppBar: FC<AppBarProps> = ({ ...props }) => {
               onLongPress={() => router.dismissAll()}
               style={{ width: "20%" }}
             >
-              <ArrowLeft size={26} color="white" />
+              <ArrowLeft size={26} color="#242424" />
             </Pressable>
           ) : (
             <View style={{ width: "20%" }} />
@@ -42,7 +42,7 @@ const AppBar: FC<AppBarProps> = ({ ...props }) => {
             className="flex items-center justify-center"
             style={{ width: "60%" }}
           >
-            <Text family="fancy" className="text-2xl">
+            <Text family="lfeMedium" className="text-xl">
               {props.title}
             </Text>
           </View>

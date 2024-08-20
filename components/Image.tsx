@@ -1,3 +1,4 @@
+import { windowWidth } from "@/constants/window"
 import { deletePiece, updatePiece } from "@/lib/api/pieces/mutations"
 import { Piece, UpdatePieceParams } from "@/lib/db/schema/pieces"
 import { useHomeStore } from "@/lib/store/home-store"
@@ -12,25 +13,26 @@ import {
   NotificationFeedbackType,
   impactAsync,
   notificationAsync,
-  selectionAsync,
 } from "expo-haptics"
 import { useRouter } from "expo-router"
 import {
   ArchiveIcon,
   FolderPlusIcon,
+  HeartCrackIcon,
+  HeartIcon,
   MousePointerClickIcon,
-  StarsIcon,
   TrashIcon,
 } from "lucide-react-native"
 import { FC, useRef, useState } from "react"
-import { Pressable } from "react-native"
+import { Pressable, View } from "react-native"
 import Animated, { FadeIn } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
 import AddToCollectionView from "./AddToCollectionView"
 import AlertDialog from "./AlertDialog"
-import BottomSheetOptionsList from "./BottomSheetOptionsList"
 import ImageSaver from "./ImageSaver"
+import SheetHeader from "./SheetHeader"
+import SheetMenuItem from "./SheetMenuItem"
 import { useToast } from "./ui/toast"
 
 interface ImageProps {
@@ -73,16 +75,17 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
         impactAsync(ImpactFeedbackStyle.Medium)
         bottomSheetRef.current?.present()
       }}
+      className="h-80 overflow-hidden rounded-lg"
       style={{
-        width: "100%",
+        width: windowWidth / 2 - 8,
         padding: 8,
-        aspectRatio: piece.aspect_ratio!,
         position: "relative",
       }}
     >
       <Animated.Image
         source={{ uri: piece.filePath }}
         entering={FadeIn.delay(index * 100)}
+        className="rounded-2xl"
         style={{
           height: "100%",
           width: "100%",
@@ -94,111 +97,125 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
       />
       <BottomSheetModal
         ref={bottomSheetRef}
-        enableDynamicSizing
+        detached
+        bottomInset={insets.bottom}
+        snapPoints={["57%"]}
         style={{
-          borderRadius: 24,
+          marginHorizontal: 14,
+          borderRadius: 30,
           overflow: "hidden",
         }}
-        handleIndicatorStyle={{ backgroundColor: "#D0D0D0" }}
+        handleComponent={null}
         backdropComponent={(e) => {
           return (
             <BottomSheetBackdrop
               onPress={() => bottomSheetRef.current?.dismiss()}
               appearsOnIndex={0}
               disappearsOnIndex={-1}
-              style={[e.style, { backgroundColor: "rgba(0,0,0,0.6)" }]}
+              style={[e.style, { backgroundColor: "rgba(0,0,0,0.7)" }]}
               animatedIndex={e.animatedIndex}
               animatedPosition={e.animatedPosition}
             />
           )
         }}
-        backgroundStyle={{ backgroundColor: "#191919" }}
+        backgroundStyle={{ backgroundColor: "#FFFFFE" }}
       >
         <BottomSheetView
-          className="px-5 pt-3"
+          className="px-8"
           style={{ paddingBottom: insets.bottom + 20 }}
         >
-          <BottomSheetOptionsList
-            roundBottom={false}
-            items={[
-              {
-                icon: <StarsIcon color="#D0D0D0" size={20} />,
-                text: piece.favorited ? "Unfavorite Photo" : "Favorite Photo",
-                shown: !piece.archived,
-                onPress: async () => {
-                  const updatedPiece: UpdatePieceParams = {
-                    id: piece.id!,
-                    tags: piece.tags,
-                    archived: piece.archived!,
-                    filePath: piece.filePath,
-                    aspect_ratio: piece.aspect_ratio!,
-                    collections: piece.collections,
-                    favorited: !piece.favorited,
-                  }
-
-                  await updatePiece(piece.id!, updatedPiece)
-                  mutate("pieces")
-                  bottomSheetRef.current?.dismiss()
-
-                  notificationAsync(NotificationFeedbackType.Success)
-                },
-              },
-              {
-                icon: <MousePointerClickIcon color="#D0D0D0" size={20} />,
-                text: "Select Photo",
-                onPress: () => {
-                  homeStore.setIsSelecting(true, piece.archived!)
-                  homeStore.setSelectedPieces([piece])
-                  bottomSheetRef.current?.dismiss()
-                },
-              },
-              {
-                icon: <FolderPlusIcon color="#D0D0D0" size={20} />,
-                text: "Add to Collection",
-                shown: !piece.archived,
-                onPress: () => collectionRef.current?.present(),
-              },
-              {
-                icon: <ArchiveIcon color="#D0D0D0" size={20} />,
-                text: piece.archived ? "Unarchive Photo" : "Archive Photo",
-                onPress: async () => {
-                  const updatedPiece: UpdatePieceParams = {
-                    id: piece.id!,
-                    tags: piece.tags,
-                    archived: !piece.archived,
-                    filePath: piece.filePath,
-                    aspect_ratio: piece.aspect_ratio!,
-                    collections: piece.collections,
-                    favorited: piece.favorited,
-                  }
-
-                  await updatePiece(piece.id!, updatedPiece)
-                  mutate("pieces")
-                  mutate("archived")
-                  bottomSheetRef.current?.dismiss()
-
-                  notificationAsync(NotificationFeedbackType.Success)
-                },
-              },
-            ]}
-            otherItems={[
-              <ImageSaver
-                {...piece}
-                close={() => bottomSheetRef.current?.dismiss()}
-              />,
-            ]}
-            destructiveItems={[
-              {
-                icon: <TrashIcon color="#FC2A2C" size={20} />,
-                text: "Delete Photo",
-                onPress: async () => {
-                  selectionAsync()
-                  setDeleteDialogOpen(true)
-                  bottomSheetRef.current?.dismiss()
-                },
-              },
-            ]}
+          <SheetHeader
+            title="Photo Options"
+            close={() => bottomSheetRef.current?.dismiss()}
           />
+          <View className="gap-y-4">
+            <SheetMenuItem
+              title={piece.favorited ? "Unfavorite Photo" : "Favorite Photo"}
+              icon={
+                piece.favorited ? (
+                  <HeartCrackIcon color="#494849" size={18} />
+                ) : (
+                  <HeartIcon color="#494849" size={18} />
+                )
+              }
+              onPress={async () => {
+                const updatedPiece: UpdatePieceParams = {
+                  id: piece.id!,
+                  tags: piece.tags,
+                  archived: piece.archived!,
+                  filePath: piece.filePath,
+                  aspect_ratio: piece.aspect_ratio!,
+                  collections: piece.collections,
+                  favorited: !piece.favorited,
+                }
+
+                await updatePiece(piece.id!, updatedPiece)
+                mutate("pieces")
+                notificationAsync(NotificationFeedbackType.Success)
+                bottomSheetRef.current?.dismiss()
+              }}
+            />
+            <SheetMenuItem
+              title="Select Photo"
+              icon={<MousePointerClickIcon color="#494849" size={18} />}
+              onPress={() => {
+                homeStore.setIsSelecting(true, piece.archived!)
+                homeStore.setSelectedPieces([piece])
+                bottomSheetRef.current?.dismiss()
+              }}
+            />
+            <SheetMenuItem
+              title="Add to Collection"
+              icon={<FolderPlusIcon color="#494849" size={18} />}
+              onPress={() => collectionRef.current?.present()}
+            />
+            <SheetMenuItem
+              title={piece.archived ? "Unarchive Photo" : "Archive Photo"}
+              icon={<ArchiveIcon color="#494849" size={18} />}
+              onPress={async () => {
+                const updatedPiece: UpdatePieceParams = {
+                  id: piece.id!,
+                  tags: piece.tags,
+                  archived: !piece.archived,
+                  filePath: piece.filePath,
+                  aspect_ratio: piece.aspect_ratio!,
+                  collections: piece.collections,
+                  favorited: piece.favorited,
+                }
+
+                await updatePiece(piece.id!, updatedPiece)
+                mutate("pieces")
+                mutate("archived")
+                bottomSheetRef.current?.dismiss()
+
+                notificationAsync(NotificationFeedbackType.Success)
+              }}
+            />
+            <ImageSaver {...piece} close={() => {}} />
+            <SheetMenuItem
+              isDestructive
+              title="Delete Photo"
+              icon={<TrashIcon color="#FF58AE" size={18} />}
+              onPress={async () => {
+                const updatedPiece: UpdatePieceParams = {
+                  id: piece.id!,
+                  tags: piece.tags,
+                  archived: !piece.archived,
+                  filePath: piece.filePath,
+                  aspect_ratio: piece.aspect_ratio!,
+                  collections: piece.collections,
+                  favorited: piece.favorited,
+                }
+
+                await updatePiece(piece.id!, updatedPiece)
+                mutate("pieces")
+                mutate("archived")
+                bottomSheetRef.current?.dismiss()
+
+                notificationAsync(NotificationFeedbackType.Success)
+              }}
+            />
+          </View>
         </BottomSheetView>
       </BottomSheetModal>
       <AlertDialog
@@ -215,30 +232,36 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
       />
       <BottomSheetModal
         ref={collectionRef}
-        enableDynamicSizing
+        detached
+        bottomInset={insets.bottom}
+        snapPoints={["57%"]}
         style={{
-          borderRadius: 24,
+          marginHorizontal: 14,
+          borderRadius: 30,
           overflow: "hidden",
         }}
-        handleIndicatorStyle={{ backgroundColor: "#D0D0D0" }}
+        handleComponent={null}
         backdropComponent={(e) => {
           return (
             <BottomSheetBackdrop
-              onPress={() => collectionRef.current?.dismiss()}
+              onPress={() => bottomSheetRef.current?.dismiss()}
               appearsOnIndex={0}
               disappearsOnIndex={-1}
-              style={[e.style, { backgroundColor: "rgba(0,0,0,0.6)" }]}
+              style={[e.style, { backgroundColor: "rgba(0,0,0,0.7)" }]}
               animatedIndex={e.animatedIndex}
               animatedPosition={e.animatedPosition}
             />
           )
         }}
-        backgroundStyle={{ backgroundColor: "#191919" }}
+        backgroundStyle={{ backgroundColor: "#FFFFFE" }}
       >
-        <BottomSheetView>
+        <BottomSheetView
+          className="px-8 pb-5"
+          style={{ paddingBottom: insets.bottom }}
+        >
           <AddToCollectionView
-            close={() => collectionRef.current?.dismiss()}
             selectedPiece={piece}
+            close={() => collectionRef.current?.dismiss()}
           />
         </BottomSheetView>
       </BottomSheetModal>

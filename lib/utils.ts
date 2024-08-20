@@ -11,20 +11,26 @@ export function assignFontFamily(family: FontType) {
   let fontFamily = "favoritRegular"
 
   switch (family) {
-    case "light":
-      fontFamily = "favoritLight"
+    case "familyRegular":
+      fontFamily = "familyRegular"
       break
-    case "regular":
-      fontFamily = "favoritRegular"
+    case "familyMedium":
+      fontFamily = "familyMedium"
       break
-    case "medium":
-      fontFamily = "favoritMedium"
+    case "familySemiBold":
+      fontFamily = "familySemiBold"
       break
-    case "bold":
-      fontFamily = "favoritBold"
+    case "lfeRegular":
+      fontFamily = "lfeRegular"
       break
-    case "fancy":
-      fontFamily = "gtSuper"
+    case "lfeMedium":
+      fontFamily = "lfeMedium"
+      break
+    case "lfeSemiBold":
+      fontFamily = "lfeSemiBold"
+      break
+    case "lfeBold":
+      fontFamily = "lfeBold"
       break
   }
 
