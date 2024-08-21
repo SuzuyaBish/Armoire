@@ -21,13 +21,11 @@ import { Toast, useToast } from "./ui/toast"
 
 type CollectionCreatorProps = {
   trigger?: React.ReactNode
-  className?: string
   onDone?: (done: boolean) => void
 }
 
 export default function CollectionCreator({
   trigger,
-  className,
   onDone,
 }: CollectionCreatorProps) {
   const toast = useToast()
@@ -93,12 +91,8 @@ export default function CollectionCreator({
 
       <BottomSheetModal
         ref={bottomSheetRef}
-        detached
-        bottomInset={insets.bottom + 60}
-        snapPoints={["22%"]}
+        snapPoints={["19%"]}
         style={{
-          marginHorizontal: 14,
-          marginBottom: 60,
           borderRadius: 30,
           overflow: "hidden",
         }}

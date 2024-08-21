@@ -6,10 +6,11 @@ import { NotificationFeedbackType, notificationAsync } from "expo-haptics"
 import { Image } from "expo-image"
 import { PlusCircleIcon, PlusIcon } from "lucide-react-native"
 import { FC } from "react"
-import { TouchableOpacity, View } from "react-native"
+import { ScrollView, TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import useSWR, { useSWRConfig } from "swr"
 import CollectionCreator from "./CollectionCreator"
+import SheetHeader from "./SheetHeader"
 import { Text } from "./StyledComponents"
 
 interface AddToCollectionMultiViewProps {
@@ -34,22 +35,20 @@ const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
         marginBottom: insets.bottom,
       }}
     >
-      <View className="flex flex-row items-center justify-between border-b border-muted px-7 pb-3 pt-2">
-        <View>
-          <PlusIcon color="transparent" />
-        </View>
-        <Text className="text-2xl" family="fancy">
-          Connect
-        </Text>
-        <CollectionCreator
-          trigger={
-            <View className="p-2">
-              <PlusIcon color="#AAAAAA" />
-            </View>
-          }
-        />
-      </View>
-      <View className="p-7">
+      <SheetHeader
+        title="Add to Collection"
+        close={close}
+        actions={
+          <CollectionCreator
+            trigger={
+              <View className="rounded-full bg-muted p-1.5">
+                <PlusIcon color="#494849" size={20} />
+              </View>
+            }
+          />
+        }
+      />
+      <ScrollView>
         {!isLoading && data && data.allData && data.allData.length > 0 ? (
           <View className="gap-y-5">
             {data.allData.map((collection) => {
@@ -90,7 +89,7 @@ const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
 
                     notificationAsync(NotificationFeedbackType.Success)
                   }}
-                  className="flex flex-row items-center justify-between"
+                  className="flex flex-row items-center justify-between rounded-2xl bg-muted p-3"
                 >
                   <View className="flex flex-row items-center gap-x-4">
                     <View className="flex size-14 items-center justify-center">
@@ -110,7 +109,7 @@ const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
                     </View>
                     <View className="flex flex-col">
                       <Text className="text-lg">{collection.title}</Text>
-                      <Text className="text-sm text-cosmosMutedText">
+                      <Text className="text-cosmosMutedText text-sm">
                         {collection.piecesData.length} Photos
                       </Text>
                     </View>
@@ -119,16 +118,6 @@ const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
                 </TouchableOpacity>
               )
             })}
-            <CollectionCreator
-              trigger={
-                <View className="flex flex-row items-center gap-x-4">
-                  <View className="flex size-14 items-center justify-center bg-white">
-                    <PlusIcon color="black" />
-                  </View>
-                  <Text className="text-lg">New Collection</Text>
-                </View>
-              }
-            />
           </View>
         ) : (
           <CollectionCreator
@@ -142,7 +131,7 @@ const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
             }
           />
         )}
-      </View>
+      </ScrollView>
     </View>
   )
 }

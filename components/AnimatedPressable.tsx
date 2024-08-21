@@ -5,11 +5,13 @@ interface AnimatedPressableProps
   extends React.ComponentProps<typeof MotiPressable> {
   children: React.ReactNode
   modest?: boolean
+  extraModest?: boolean
 }
 
 const AnimatedPressable: FC<AnimatedPressableProps> = ({
   children,
   modest = false,
+  extraModest = false,
   ...props
 }) => {
   return (
@@ -23,6 +25,10 @@ const AnimatedPressable: FC<AnimatedPressableProps> = ({
             if (modest) {
               return {
                 scale: hovered || pressed ? 0.93 : 1,
+              }
+            } else if (extraModest) {
+              return {
+                scale: hovered || pressed ? 0.99 : 1,
               }
             } else {
               return {

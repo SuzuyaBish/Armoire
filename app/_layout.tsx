@@ -2,6 +2,7 @@ import FAB from "@/components/create-actions/FAB"
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider"
 import { db } from "@/lib/db"
 import migrations from "@/lib/db/migrations/migrations"
+import { useHomeStore } from "@/lib/store/home-store"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
 import { useFonts } from "expo-font"
@@ -52,6 +53,7 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const homeStore = useHomeStore()
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
@@ -72,7 +74,7 @@ function RootLayoutNav() {
             <Stack.Screen name="viewer" />
             <Stack.Screen name="(editor)" />
           </Stack>
-          <FAB />
+          {homeStore.isInArchive || homeStore.isSelecting ? null : <FAB />}
           <StatusBar style="dark" />
         </GluestackUIProvider>
       </BottomSheetModalProvider>

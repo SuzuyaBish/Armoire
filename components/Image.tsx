@@ -23,9 +23,10 @@ import {
   MousePointerClickIcon,
   TrashIcon,
 } from "lucide-react-native"
+import { MotiView } from "moti"
 import { FC, useRef, useState } from "react"
 import { Pressable, View } from "react-native"
-import Animated, { FadeIn } from "react-native-reanimated"
+import Animated, { FadeIn, LinearTransition } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
 import AddToCollectionView from "./AddToCollectionView"
@@ -82,19 +83,27 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
         position: "relative",
       }}
     >
-      <Animated.Image
-        source={{ uri: piece.filePath }}
+      <MotiView
+        className="rounded-3xl"
+        layout={LinearTransition}
         entering={FadeIn.delay(index * 100)}
-        className="rounded-2xl"
-        style={{
-          height: "100%",
-          width: "100%",
+        animate={{
+          padding: homeStore.selectedPieces.includes(piece) ? 4 : 0,
           borderWidth: homeStore.selectedPieces.includes(piece) ? 4 : 0,
           borderColor: homeStore.selectedPieces.includes(piece)
-            ? "#586CC0"
+            ? "black"
             : "transparent",
         }}
-      />
+      >
+        <Animated.Image
+          source={{ uri: piece.filePath }}
+          className="rounded-2xl"
+          style={{
+            height: "100%",
+            width: "100%",
+          }}
+        />
+      </MotiView>
       <BottomSheetModal
         ref={bottomSheetRef}
         detached

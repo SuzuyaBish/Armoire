@@ -1,3 +1,4 @@
+import AnimatedPressable from "@/components/AnimatedPressable"
 import CollectionCreator from "@/components/CollectionCreator"
 import Image from "@/components/Image"
 import SelectionBar from "@/components/SelectionBar"
@@ -7,11 +8,10 @@ import { Piece } from "@/lib/db/schema/pieces"
 import { useFabStore } from "@/lib/store/fab-store"
 import { useHomeStore } from "@/lib/store/home-store"
 import { cn } from "@/lib/utils"
-import { AnimatePresence } from "@legendapp/motion"
 import MasonryList from "@react-native-seoul/masonry-list"
 import { MotiView } from "moti/build"
 import { useRef, useState } from "react"
-import { Pressable, ScrollView, TouchableOpacity, View } from "react-native"
+import { Pressable, ScrollView, View } from "react-native"
 import PagerView from "react-native-pager-view"
 import Animated, { LinearTransition } from "react-native-reanimated"
 import useSWR from "swr"
@@ -36,33 +36,29 @@ export default function TabOneScreen() {
           onPress={() => fabStore.setStage("1")}
         />
       )}
-      <AnimatePresence>
-        {homeStore.isSelecting ? (
-          <MotiView
-            from={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            exitTransition={{
-              type: "timing",
-              duration: 2500,
-            }}
-            className="my-6 flex items-center justify-center"
+      {homeStore.isSelecting ? (
+        <Animated.View
+          layout={LinearTransition.springify()
+            .stiffness(1000)
+            .damping(500)
+            .mass(3)}
+          className="my-6 flex items-center justify-center"
+        >
+          <Text>Selecting</Text>
+        </Animated.View>
+      ) : (
+        <Animated.View
+          layout={LinearTransition.springify()
+            .stiffness(1000)
+            .damping(500)
+            .mass(3)}
+          className="my-3 flex flex-row items-center justify-center"
+        >
+          <AnimatedPressable
+            onPress={() => pagerRef.current?.setPage(0)}
+            extraModest
           >
-            <Text>Selecting</Text>
-          </MotiView>
-        ) : (
-          <MotiView
-            from={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            exitTransition={{
-              type: "timing",
-              duration: 2500,
-            }}
-            className="my-3 flex flex-row items-center justify-center"
-          >
-            <TouchableOpacity
-              onPress={() => pagerRef.current?.setPage(0)}
+            <View
               className={cn(
                 "rounded-full px-6 py-3",
                 selectedPage === 0 && "bg-accent"
@@ -76,9 +72,13 @@ export default function TabOneScreen() {
               >
                 Clothes
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => pagerRef.current?.setPage(1)}
+            </View>
+          </AnimatedPressable>
+          <AnimatedPressable
+            onPress={() => pagerRef.current?.setPage(1)}
+            extraModest
+          >
+            <View
               className={cn(
                 "rounded-full px-6 py-3",
                 selectedPage === 1 && "bg-accent"
@@ -92,9 +92,13 @@ export default function TabOneScreen() {
               >
                 Favorites
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => pagerRef.current?.setPage(2)}
+            </View>
+          </AnimatedPressable>
+          <AnimatedPressable
+            onPress={() => pagerRef.current?.setPage(2)}
+            extraModest
+          >
+            <View
               className={cn(
                 "rounded-full px-6 py-3",
                 selectedPage === 2 && "bg-accent"
@@ -108,10 +112,10 @@ export default function TabOneScreen() {
               >
                 Archive
               </Text>
-            </TouchableOpacity>
-          </MotiView>
-        )}
-      </AnimatePresence>
+            </View>
+          </AnimatedPressable>
+        </Animated.View>
+      )}
       <PagerView
         ref={pagerRef}
         initialPage={selectedPage}

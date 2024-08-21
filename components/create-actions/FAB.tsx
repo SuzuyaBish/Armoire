@@ -15,7 +15,6 @@ import React from "react"
 import { View } from "react-native"
 import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useSWRConfig } from "swr"
 import CollectionCreator from "../CollectionCreator"
 import PhotoTaker from "../PhotoTaker"
 import FABMenuItem from "./FABMenuItem"
@@ -23,7 +22,6 @@ import FABMenuItem from "./FABMenuItem"
 export default function FAB() {
   const insets = useSafeAreaInsets()
   const fabStore = useFabStore()
-  const { mutate } = useSWRConfig()
 
   const containerStyle = useAnimatedStyle(() => {
     if (fabStore.stage === "1") {
