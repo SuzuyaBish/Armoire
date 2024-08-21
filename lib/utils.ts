@@ -1,4 +1,7 @@
+import { springConfig } from "@/constants/spring-config"
+import { windowHeight, windowWidth } from "@/constants/window"
 import clsx, { ClassValue } from "clsx"
+import { withSpring } from "react-native-reanimated"
 import { twMerge } from "tailwind-merge"
 import { DialogTypes } from "./types/dialog-types"
 import { FontType } from "./types/font-types"
@@ -152,4 +155,37 @@ export const removeDuplicatesFromArrays = (
   const unique = Array.from(new Set(combined))
 
   return unique
+}
+
+export const generateStyles = (
+  stage: "1" | "2" | "3",
+  topInset: number,
+  bottomInset: number
+) => {
+  if (stage === "1") {
+    return {
+      bottom: withSpring(90 + 20, springConfig),
+      right: 20,
+      left: withSpring(windowWidth - 56 - 20, springConfig),
+      top: withSpring(windowHeight - 90 - topInset - 16, springConfig),
+      borderRadius: withSpring(56, springConfig),
+    }
+  }
+  if (stage === "2") {
+    return {
+      bottom: withSpring(bottomInset, springConfig),
+      right: 20,
+      left: withSpring(20, springConfig),
+      top: withSpring(windowHeight / 1.5, springConfig),
+      borderRadius: withSpring(36, springConfig),
+    }
+  }
+
+  return {
+    bottom: withSpring(20, springConfig),
+    right: 20,
+    left: withSpring(20, springConfig),
+    top: withSpring(windowHeight / 1.5, springConfig),
+    borderRadius: withSpring(36, springConfig),
+  }
 }

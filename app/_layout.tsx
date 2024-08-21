@@ -1,3 +1,4 @@
+import FAB from "@/components/create-actions/FAB"
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider"
 import { db } from "@/lib/db"
 import migrations from "@/lib/db/migrations/migrations"
@@ -71,6 +72,7 @@ function RootLayoutNav() {
             <Stack.Screen name="viewer" />
             <Stack.Screen name="(editor)" />
           </Stack>
+          <FAB />
           <StatusBar style="dark" />
         </GluestackUIProvider>
       </BottomSheetModalProvider>

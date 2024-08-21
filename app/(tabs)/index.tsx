@@ -4,18 +4,21 @@ import SelectionBar from "@/components/SelectionBar"
 import { ParentView, Text } from "@/components/StyledComponents"
 import { getOrderedPiecesWithoutArchived } from "@/lib/api/pieces/queries"
 import { Piece } from "@/lib/db/schema/pieces"
+import { useFabStore } from "@/lib/store/fab-store"
 import { useHomeStore } from "@/lib/store/home-store"
 import { cn } from "@/lib/utils"
 import { AnimatePresence } from "@legendapp/motion"
 import MasonryList from "@react-native-seoul/masonry-list"
 import { MotiView } from "moti/build"
 import { useRef, useState } from "react"
-import { ScrollView, TouchableOpacity, View } from "react-native"
+import { Pressable, ScrollView, TouchableOpacity, View } from "react-native"
 import PagerView from "react-native-pager-view"
 import Animated, { LinearTransition } from "react-native-reanimated"
 import useSWR from "swr"
 
 export default function TabOneScreen() {
+  const fabStore = useFabStore()
+
   const [selectedPage, setSelectedPage] = useState(0)
   const pagerRef = useRef<PagerView>(null)
   const homeStore = useHomeStore()
@@ -27,6 +30,12 @@ export default function TabOneScreen() {
   return (
     <ParentView hasInsets hasPadding className="relative">
       <SelectionBar />
+      {fabStore.stage === "2" && (
+        <Pressable
+          className="absolute bottom-0 left-0 right-0 top-0 z-10"
+          onPress={() => fabStore.setStage("1")}
+        />
+      )}
       <AnimatePresence>
         {homeStore.isSelecting ? (
           <MotiView
@@ -120,7 +129,13 @@ export default function TabOneScreen() {
             <Animated.View className="flex flex-row flex-wrap justify-between">
               {data.pieces.map((piece, i) => {
                 return (
-                  <MotiView key={piece.id} layout={LinearTransition}>
+                  <MotiView
+                    key={piece.id}
+                    layout={LinearTransition.springify()
+                      .stiffness(1000)
+                      .damping(500)
+                      .mass(3)}
+                  >
                     <Image
                       piece={piece}
                       index={i}
