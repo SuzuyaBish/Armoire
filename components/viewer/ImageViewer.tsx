@@ -1,10 +1,15 @@
 import { windowHeight } from "@/constants/window"
 import { getOrderedPiecesWithoutId } from "@/lib/api/pieces/queries"
 import { Piece } from "@/lib/db/schema/pieces"
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet"
 import MasonryList from "@react-native-seoul/masonry-list"
 import { useRouter } from "expo-router"
 import { Edit2Icon, PlusIcon } from "lucide-react-native"
-import { FC } from "react"
+import { FC, useRef } from "react"
 import { Pressable, TouchableOpacity, View } from "react-native"
 import Animated, {
   FadeIn,
@@ -16,7 +21,7 @@ import Animated, {
 } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import useSWR from "swr"
-import CollectionCreator from "../CollectionCreator"
+import AddToCollectionView from "../AddToCollectionView"
 
 interface ImageViewerProps {
   data: Piece
@@ -28,6 +33,7 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
   const insets = useSafeAreaInsets()
   const translationY = useSharedValue(1)
   const translationYControls = useSharedValue(1)
+  const bottomsheetRef = useRef<BottomSheetModal>(null)
 
   const otherFetcher = async () => getOrderedPiecesWithoutId(id)
   const otherData = useSWR(id + "other", otherFetcher)
@@ -81,7 +87,7 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
           layout={LinearTransition}
           style={{
             width: "100%",
-            aspectRatio: data?.aspect_ratio!,
+            height: "100%",
             maxHeight: 500,
           }}
         >
@@ -106,14 +112,12 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
           },
         ]}
       >
-        <CollectionCreator
-          className="w-[40%]"
-          trigger={
-            <View className="flex h-14 w-full items-center justify-center rounded-full bg-accent">
-              <PlusIcon color="white" />
-            </View>
-          }
-        />
+        <Pressable
+          onPress={() => bottomsheetRef.current?.present()}
+          className="flex h-14 w-[40%] items-center justify-center rounded-full border border-muted/10 bg-accent"
+        >
+          <PlusIcon color="white" />
+        </Pressable>
         <TouchableOpacity
           onPress={() => {
             router.push({
@@ -123,9 +127,44 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
           }}
           className="bg-cosmosMuted flex size-14 items-center justify-center rounded-full"
         >
-          <Edit2Icon color="#242424" />
+          <Edit2Icon color="white" />
         </TouchableOpacity>
       </Animated.View>
+      <BottomSheetModal
+        ref={bottomsheetRef}
+        detached
+        bottomInset={insets.bottom}
+        snapPoints={["57%"]}
+        style={{
+          marginHorizontal: 14,
+          borderRadius: 30,
+          overflow: "hidden",
+        }}
+        handleComponent={null}
+        backdropComponent={(e) => {
+          return (
+            <BottomSheetBackdrop
+              onPress={() => bottomsheetRef.current?.dismiss()}
+              appearsOnIndex={0}
+              disappearsOnIndex={-1}
+              style={[e.style, { backgroundColor: "rgba(0,0,0,0.7)" }]}
+              animatedIndex={e.animatedIndex}
+              animatedPosition={e.animatedPosition}
+            />
+          )
+        }}
+        backgroundStyle={{ backgroundColor: "#FFFFFE" }}
+      >
+        <BottomSheetView
+          className="px-8 pb-5"
+          style={{ paddingBottom: insets.bottom }}
+        >
+          <AddToCollectionView
+            selectedPiece={data}
+            close={() => bottomsheetRef.current?.dismiss()}
+          />
+        </BottomSheetView>
+      </BottomSheetModal>
       <Animated.ScrollView
         showsVerticalScrollIndicator={false}
         onScroll={scrollHandler}

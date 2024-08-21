@@ -6,7 +6,7 @@ import { useHomeStore } from "@/lib/store/home-store"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
 import { useFonts } from "expo-font"
-import { Stack } from "expo-router"
+import { Stack, usePathname } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import { StatusBar } from "expo-status-bar"
 import { useEffect } from "react"
@@ -54,6 +54,8 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const homeStore = useHomeStore()
+  const pathname = usePathname()
+  const goodRoutes = ["/", "/two", "/account"]
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
@@ -74,7 +76,11 @@ function RootLayoutNav() {
             <Stack.Screen name="viewer" />
             <Stack.Screen name="(editor)" />
           </Stack>
-          {homeStore.isInArchive || homeStore.isSelecting ? null : <FAB />}
+          {homeStore.isInArchive ||
+          homeStore.isSelecting ||
+          !goodRoutes.includes(pathname) ? null : (
+            <FAB />
+          )}
           <StatusBar style="dark" />
         </GluestackUIProvider>
       </BottomSheetModalProvider>

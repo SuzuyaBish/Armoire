@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils"
 import { useRouter } from "expo-router"
 import { ArrowLeft } from "lucide-react-native"
 import { FC } from "react"
@@ -12,6 +13,7 @@ type AppBarWithChildren = {
 type AppBarWithoutChildren = {
   custom: false
   title: string
+  inverted?: boolean
   hasBackButton?: boolean
   action?: React.ReactNode
   actionOnPress?: () => void
@@ -33,7 +35,10 @@ const AppBar: FC<AppBarProps> = ({ ...props }) => {
               onLongPress={() => router.dismissAll()}
               style={{ width: "20%" }}
             >
-              <ArrowLeft size={26} color="#242424" />
+              <ArrowLeft
+                size={26}
+                color={props.inverted ? "white" : "#242424"}
+              />
             </Pressable>
           ) : (
             <View style={{ width: "20%" }} />
@@ -42,7 +47,10 @@ const AppBar: FC<AppBarProps> = ({ ...props }) => {
             className="flex items-center justify-center"
             style={{ width: "60%" }}
           >
-            <Text family="lfeMedium" className="text-xl">
+            <Text
+              family="lfeMedium"
+              className={cn("text-xl", props.inverted && "text-white")}
+            >
               {props.title}
             </Text>
           </View>

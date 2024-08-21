@@ -14,10 +14,11 @@ export default function ViewerPage() {
   const { data } = useSWR(id, fetcher)
 
   return (
-    <ParentView hasInsets className="relative">
+    <ParentView hasInsets className="relative bg-black">
       {data && (
         <>
           <AppBar
+            inverted
             title={format(data?.piece?.createdAt!, "dd MMMM yyyy")}
             custom={false}
             hasBackButton
