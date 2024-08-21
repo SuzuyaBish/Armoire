@@ -80,15 +80,15 @@ export default function CollectionCreator({
           <Text className="text-accent">Collection</Text>
         </Pressable>
       ) : (
-        <Pressable
-          className={className}
+        <AnimatedPressable
+          modest
           onPress={() => {
             selectionAsync()
             bottomSheetRef.current?.present()
           }}
         >
           {trigger}
-        </Pressable>
+        </AnimatedPressable>
       )}
 
       <BottomSheetModal

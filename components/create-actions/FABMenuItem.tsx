@@ -9,6 +9,7 @@ interface FABMenuItemProps {
   description: string
   color: string
   onPress?: () => void
+  asChild?: boolean
 }
 
 const FABMenuItem: FC<FABMenuItemProps> = ({
@@ -17,7 +18,28 @@ const FABMenuItem: FC<FABMenuItemProps> = ({
   description,
   color,
   onPress,
+  asChild,
 }) => {
+  if (asChild) {
+    return (
+      <View className="flex flex-row gap-x-4 rounded-[18px] border border-accent bg-[#0F100F] p-5">
+        <View
+          className="flex size-10 items-center justify-center rounded-full"
+          style={{
+            backgroundColor: color,
+          }}
+        >
+          {icon}
+        </View>
+        <View className="gap-y-1">
+          <Text className="text-lg text-white" family="familySemiBold">
+            {title}
+          </Text>
+          <Text className="text-sm text-muted/50">{description}</Text>
+        </View>
+      </View>
+    )
+  }
   return (
     <AnimatedPressable onPress={onPress} modest>
       <View className="flex flex-row gap-x-4 rounded-[18px] border border-accent bg-[#0F100F] p-5">

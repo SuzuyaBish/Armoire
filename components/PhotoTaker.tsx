@@ -15,18 +15,20 @@ import { Image } from "expo-image"
 import { RefreshCw, XIcon } from "lucide-react-native"
 import { MotiPressable } from "moti/interactions"
 import React, { useRef, useState } from "react"
-import { Pressable, TouchableOpacity, View } from "react-native"
+import { TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
+import AnimatedPressable from "./AnimatedPressable"
 
 type ImagePickerProps = {
+  trigger: React.ReactNode
   onDone: (done: boolean) => void
 }
 
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj["
 
-export default function PhotoTaker({ onDone }: ImagePickerProps) {
+export default function PhotoTaker({ onDone, trigger }: ImagePickerProps) {
   const insets = useSafeAreaInsets()
   const { mutate } = useSWRConfig()
   const bottomSheetRef = useRef<BottomSheetModal>(null)
@@ -57,12 +59,8 @@ export default function PhotoTaker({ onDone }: ImagePickerProps) {
   }
 
   return (
-    <Pressable
-      onPress={async () => getPermissions()}
-      style={{ width: windowWidth / 3 - 10 }}
-      className="flex h-full items-center justify-center border-x"
-    >
-      <Text>Photo</Text>
+    <AnimatedPressable modest onPress={async () => getPermissions()}>
+      {trigger}
       <BottomSheetModal
         ref={bottomSheetRef}
         snapPoints={["100%"]}
@@ -106,18 +104,16 @@ export default function PhotoTaker({ onDone }: ImagePickerProps) {
               <View className="absolute bottom-10 left-0 right-0">
                 <View className="flex flex-row items-center justify-evenly px-5">
                   <TouchableOpacity
-                    className="rounded-xl bg-destructive px-8 py-4"
+                    className="rounded-xl bg-redColor px-8 py-4"
                     onPress={() => {
                       impactAsync(ImpactFeedbackStyle.Heavy)
                       setImage(undefined)
                     }}
                   >
-                    <Text className="text-lg text-destructiveText">
-                      Retake Photo
-                    </Text>
+                    <Text className="text-lg text-white">Retake Photo</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    className="rounded-xl bg-bgColor px-8 py-4"
+                    className="rounded-xl bg-accent px-8 py-4"
                     onPress={async () => {
                       const path = await createPiecesPath()
                       await createPiece(
@@ -138,7 +134,7 @@ export default function PhotoTaker({ onDone }: ImagePickerProps) {
                       bottomSheetRef.current?.dismiss()
                     }}
                   >
-                    <Text className="text-lg">Save Photo</Text>
+                    <Text className="text-lg text-white">Save Photo</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -204,6 +200,6 @@ export default function PhotoTaker({ onDone }: ImagePickerProps) {
           )}
         </BottomSheetView>
       </BottomSheetModal>
-    </Pressable>
+    </AnimatedPressable>
   )
 }

@@ -16,6 +16,8 @@ import { View } from "react-native"
 import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useSWRConfig } from "swr"
+import CollectionCreator from "../CollectionCreator"
+import PhotoTaker from "../PhotoTaker"
 import FABMenuItem from "./FABMenuItem"
 
 export default function FAB() {
@@ -82,17 +84,29 @@ export default function FAB() {
                 }
               }}
             />
-            <FABMenuItem
-              icon={<CameraIcon color="white" size={18} />}
-              title="Take Photo"
-              description="Choose photos from your gallery"
-              color="#73CC77"
+            <PhotoTaker
+              trigger={
+                <FABMenuItem
+                  asChild
+                  icon={<CameraIcon color="white" size={18} />}
+                  title="Take Photo"
+                  description="Choose photos from your gallery"
+                  color="#73CC77"
+                />
+              }
+              onDone={() => fabStore.setStage("1")}
             />
-            <FABMenuItem
-              icon={<NotebookIcon color="white" size={18} />}
-              title="Create Collection"
-              description="Choose photos from your gallery"
-              color="#EC64AB"
+            <CollectionCreator
+              onDone={() => fabStore.setStage("1")}
+              trigger={
+                <FABMenuItem
+                  asChild
+                  icon={<NotebookIcon color="white" size={18} />}
+                  title="Create Collection"
+                  description="Choose photos from your gallery"
+                  color="#EC64AB"
+                />
+              }
             />
           </MotiView>
         )}
