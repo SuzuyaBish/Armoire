@@ -94,10 +94,18 @@ export default function FAB() {
                   color="#73CC77"
                 />
               }
-              onDone={() => fabStore.setStage("1")}
+              onDone={(done) => {
+                if (done) {
+                  fabStore.setStage("1")
+                }
+              }}
             />
             <CollectionCreator
-              onDone={() => fabStore.setStage("1")}
+              onDone={(done) => {
+                if (done) {
+                  fabStore.setStage("1")
+                }
+              }}
               trigger={
                 <FABMenuItem
                   asChild
