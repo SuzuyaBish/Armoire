@@ -1,5 +1,6 @@
 import { MotiPressable } from "moti/interactions"
 import { FC, useMemo } from "react"
+import Animated, { LinearTransition } from "react-native-reanimated"
 
 interface AnimatedPressableProps
   extends React.ComponentProps<typeof MotiPressable> {
@@ -39,7 +40,7 @@ const AnimatedPressable: FC<AnimatedPressableProps> = ({
         []
       )}
     >
-      {children}
+      <Animated.View layout={LinearTransition}>{children}</Animated.View>
     </MotiPressable>
   )
 }
