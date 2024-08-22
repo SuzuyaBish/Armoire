@@ -1,5 +1,5 @@
 import AnimatedPressable from "@/components/AnimatedPressable"
-import CollectionCreator from "@/components/CollectionCreator"
+import ArchiveScreen from "@/components/ArchiveScreen"
 import Image from "@/components/Image"
 import SelectionBar from "@/components/SelectionBar"
 import { ParentView, Text } from "@/components/StyledComponents"
@@ -9,7 +9,6 @@ import { useFabStore } from "@/lib/store/fab-store"
 import { useHomeStore } from "@/lib/store/home-store"
 import { cn } from "@/lib/utils"
 import MasonryList from "@react-native-seoul/masonry-list"
-import { usePathname } from "expo-router"
 import { MotiView } from "moti/build"
 import { useRef, useState } from "react"
 import { Pressable, ScrollView, View } from "react-native"
@@ -19,7 +18,6 @@ import useSWR from "swr"
 
 export default function TabOneScreen() {
   const fabStore = useFabStore()
-  const pathname = usePathname()
 
   const [selectedPage, setSelectedPage] = useState(0)
   const pagerRef = useRef<PagerView>(null)
@@ -182,33 +180,7 @@ export default function TabOneScreen() {
           )}
         </View>
         <View key="3">
-          <CollectionCreator onDone={(done) => {}} />
-          {!isLoading &&
-          data &&
-          data?.pieces.filter((v) => v.favorited).length > 0 ? (
-            <MasonryList
-              data={data.pieces.filter((v) => v.favorited)}
-              keyExtractor={(item): string => item.id}
-              numColumns={2}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item, i }) => {
-                const piece = item as Piece
-                return (
-                  <Image piece={piece} index={i} length={data.pieces.length} />
-                )
-              }}
-              refreshing={isLoading}
-              onRefresh={() => mutate()}
-            />
-          ) : (
-            <View className="flex flex-1 flex-col items-center justify-center">
-              <Text className="text-3xl" family="lfeBold">
-                No Favorites
-              </Text>
-              <Text className="mt-3">You can add new favorites by holding</Text>
-              <Text>down on an image and selecting favorite image.</Text>
-            </View>
-          )}
+          <ArchiveScreen />
         </View>
       </PagerView>
     </ParentView>

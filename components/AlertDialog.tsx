@@ -25,30 +25,30 @@ const AlertDialog: FC<AlertDialogProps> = ({ ...props }) => {
   return (
     <AlertDialogComponent isOpen={props.open} onClose={props.onClose} size="md">
       <AlertDialogBackdrop />
-      <AlertDialogContent>
+      <AlertDialogContent className="rounded-3xl border-muted/10 bg-black">
         <AlertDialogHeader>
-          <Text family="fancy" className="text-2xl">
+          <Text family="lfeSemiBold" className="text-2xl text-white">
             {title}
           </Text>
         </AlertDialogHeader>
         <AlertDialogBody className="mb-4 mt-3">
-          <Text>{body}</Text>
+          <Text className="text-mutedForeground">{body}</Text>
         </AlertDialogBody>
         <AlertDialogFooter className="">
           <TouchableOpacity
-            className="rounded-lg bg-white px-5 py-2"
+            className="rounded-lg border border-muted/10 bg-accent px-5 py-2"
             onPress={props.onClose}
           >
-            <Text className="text-black">Cancel</Text>
+            <Text className="text-white">Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className="rounded-lg bg-destructive px-5 py-2"
+            className="rounded-lg border border-redColor/30 bg-redColor/10 px-5 py-2"
             onPress={() => {
               props.onConfirm()
               notificationAsync(NotificationFeedbackType.Success)
             }}
           >
-            <Text className="text-destructiveText">Delete</Text>
+            <Text className="text-redColor">Delete</Text>
           </TouchableOpacity>
         </AlertDialogFooter>
       </AlertDialogContent>

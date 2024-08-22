@@ -18,7 +18,7 @@ import "../global.css"
 export { ErrorBoundary } from "expo-router"
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  initialRouteName: "/(tabs)/",
 }
 
 SplashScreen.preventAutoHideAsync()
@@ -74,7 +74,6 @@ function RootLayoutNav() {
           >
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="viewer" />
-            <Stack.Screen name="(editor)" />
           </Stack>
           {homeStore.isInArchive ||
           homeStore.isSelecting ||

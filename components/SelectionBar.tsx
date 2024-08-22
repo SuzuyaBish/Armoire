@@ -13,14 +13,12 @@ import { AnimatePresence, MotiView } from "moti/build"
 import React from "react"
 import { TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useSWRConfig } from "swr"
 import AddToCollectionMultiView from "./AddToCollectionMultiView"
 import AlertDialog from "./AlertDialog"
 import { Text } from "./StyledComponents"
 
 export default function SelectionBar() {
   const insets = useSafeAreaInsets()
-  const { mutate } = useSWRConfig()
   const homeStore = useHomeStore()
   const collectionRef = React.useRef<BottomSheetModal>(null)
 
@@ -47,9 +45,6 @@ export default function SelectionBar() {
                   <TouchableOpacity
                     onPress={async () => {
                       await multiUnarchivePiece(homeStore.selectedPieces)
-                      mutate("pieces")
-                      mutate("collections")
-                      mutate("archived")
                       homeStore.setSelectedPieces([])
                       homeStore.setIsSelecting(false)
                     }}
@@ -86,8 +81,6 @@ export default function SelectionBar() {
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={async () => {
           await multiDeletePiece(homeStore.selectedPieces)
-          mutate("pieces")
-          mutate("collections")
           setDeleteDialogOpen(false)
           homeStore.setSelectedPieces([])
           homeStore.setIsSelecting(false)

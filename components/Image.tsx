@@ -2,7 +2,6 @@ import { windowWidth } from "@/constants/window"
 import { deletePiece, updatePiece } from "@/lib/api/pieces/mutations"
 import { Piece, UpdatePieceParams } from "@/lib/db/schema/pieces"
 import { useHomeStore } from "@/lib/store/home-store"
-import { showNewToast } from "@/lib/toast"
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -206,22 +205,8 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
               title="Delete Photo"
               icon={<TrashIcon color="#FF58AE" size={18} />}
               onPress={async () => {
-                const updatedPiece: UpdatePieceParams = {
-                  id: piece.id!,
-                  tags: piece.tags,
-                  archived: !piece.archived,
-                  filePath: piece.filePath,
-                  aspect_ratio: piece.aspect_ratio!,
-                  collections: piece.collections,
-                  favorited: piece.favorited,
-                }
-
-                await updatePiece(piece.id!, updatedPiece)
-                mutate("pieces")
-                mutate("archived")
                 bottomSheetRef.current?.dismiss()
-
-                notificationAsync(NotificationFeedbackType.Success)
+                setDeleteDialogOpen(true)
               }}
             />
           </View>
@@ -236,7 +221,6 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
           mutate("pieces")
           mutate("collections")
           setDeleteDialogOpen(false)
-          showNewToast({ toast: toast, body: "Photo deleted successfully!" })
         }}
       />
       <BottomSheetModal

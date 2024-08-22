@@ -11,6 +11,7 @@ import {
 } from "@/lib/db/schema/pieces"
 import { eq } from "drizzle-orm"
 import { copyAsync, deleteAsync } from "expo-file-system"
+import { mutate } from "swr"
 
 export const createPiece = async (piece: NewPieceParams, oldPath: string) => {
   const newPiece = insertPieceSchema.parse(piece)
@@ -76,6 +77,9 @@ export const multiDeletePiece = async (pieces: Piece[]) => {
       await deletePiece(piece.id)
     }
 
+    mutate("archived")
+    mutate("pieces")
+    mutate("collections")
     return { pieces: [] }
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again"
@@ -89,6 +93,10 @@ export const multiUnarchivePiece = async (pieces: Piece[]) => {
     for (const piece of pieces) {
       await updatePiece(piece.id, { ...piece, archived: false })
     }
+
+    mutate("pieces")
+    mutate("collections")
+    mutate("archived")
 
     return { pieces: [] }
   } catch (err) {
