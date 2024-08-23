@@ -3,6 +3,7 @@ import { windowHeight, windowWidth } from "@/constants/window"
 import clsx, { ClassValue } from "clsx"
 import { withSpring } from "react-native-reanimated"
 import { twMerge } from "tailwind-merge"
+import { Tag } from "./db/schema/tags"
 import { DialogTypes } from "./types/dialog-types"
 import { FontType } from "./types/font-types"
 
@@ -188,4 +189,12 @@ export const generateStyles = (
     top: withSpring(windowHeight / 1.5, springConfig),
     borderRadius: withSpring(36, springConfig),
   }
+}
+
+export const tagInTagArray = (tagId: string, tags: Tag[]) => {
+  return tags.some((tag) => tag.id === tagId)
+}
+
+export const removeTagFromArray = (tagId: string, tags: Tag[]) => {
+  return tags.filter((tag) => tag.id !== tagId)
 }

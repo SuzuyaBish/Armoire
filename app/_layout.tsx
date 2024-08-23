@@ -1,5 +1,8 @@
 import FAB from "@/components/create-actions/FAB"
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider"
+import { defaultTags } from "@/constants/default_tags"
+import { createTag } from "@/lib/api/tags/mutations"
+import { getTags } from "@/lib/api/tags/queries"
 import { db } from "@/lib/db"
 import migrations from "@/lib/db/migrations/migrations"
 import { useHomeStore } from "@/lib/store/home-store"
@@ -13,6 +16,7 @@ import { useEffect } from "react"
 import "react-native-gesture-handler"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import "react-native-reanimated"
+import useSWR from "swr"
 import "../global.css"
 
 export { ErrorBoundary } from "expo-router"
@@ -56,6 +60,19 @@ function RootLayoutNav() {
   const homeStore = useHomeStore()
   const pathname = usePathname()
   const goodRoutes = ["/", "/two", "/account"]
+
+  const fetcher = async () => {
+    const tags = await getTags()
+
+    if (tags.tags.length === 0) {
+      for (const tag of defaultTags) {
+        await createTag({ title: tag })
+      }
+    }
+  }
+
+  const propogateTags = useSWR("tags", fetcher)
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>

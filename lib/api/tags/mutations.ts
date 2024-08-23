@@ -53,3 +53,14 @@ export const deleteTag = async (id: TagId) => {
     throw { error: message }
   }
 }
+
+export const deleteAllTags = async () => {
+  try {
+    await db.delete(tags).returning()
+    return { success: true }
+  } catch (err) {
+    const message = (err as Error).message ?? "Error, please try again"
+    console.error(message)
+    throw { error: message }
+  }
+}

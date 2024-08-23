@@ -198,7 +198,13 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
         <BottomSheetView className="flex-1 px-8 pb-5">
           <SheetHeader
             title={isEditing ? "Edit Tags" : "Edit Photo"}
-            close={() => editBottomSheetRef.current?.dismiss()}
+            close={() => {
+              if (isEditing) {
+                setIsEditing(false)
+              } else {
+                editBottomSheetRef.current?.dismiss()
+              }
+            }}
             actions={
               <>
                 {isEditing && (
@@ -210,11 +216,8 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
             }
           />
           <EditView
-            editing={(editing) => {
-              if (editing) {
-                setIsEditing(true)
-              }
-            }}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
             close={(isDeleting) => {
               if (isDeleting) {
                 editBottomSheetRef.current?.dismiss()
