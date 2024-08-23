@@ -3,7 +3,6 @@ import { getTags } from "@/lib/api/tags/queries"
 import { Piece, UpdatePieceParams } from "@/lib/db/schema/pieces"
 import { Tag } from "@/lib/db/schema/tags"
 import { cn, removeTagFromArray, tagInTagArray } from "@/lib/utils"
-import { AnimatePresence } from "@legendapp/motion"
 import { NotificationFeedbackType, notificationAsync } from "expo-haptics"
 import {
   ArchiveIcon,
@@ -13,12 +12,12 @@ import {
   TagsIcon,
   TrashIcon,
 } from "lucide-react-native"
-import { MotiView } from "moti"
 import { FC, useState } from "react"
 import { Pressable, ScrollView, View } from "react-native"
 import Animated, {
   Easing,
   FadeIn,
+  FadeOut,
   LinearTransition,
   useAnimatedStyle,
   withTiming,
@@ -27,6 +26,8 @@ import useSWR, { useSWRConfig } from "swr"
 import ImageSaver from "../ImageSaver"
 import SheetMenuItem from "../SheetMenuItem"
 import { Text } from "../StyledComponents"
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 interface EditViewProps extends Piece {
   close: (isDeleting: boolean) => void
@@ -67,15 +68,24 @@ const EditView: FC<EditViewProps> = ({
         {
           scale: isEditing
             ? withTiming(1, {
-                duration: 300,
+                duration: 200,
                 easing: Easing.inOut(Easing.cubic),
               })
             : withTiming(0.8, {
-                duration: 300,
+                duration: 200,
                 easing: Easing.inOut(Easing.cubic),
               }),
         },
       ],
+      opacity: isEditing
+        ? withTiming(1, {
+            duration: 200,
+            easing: Easing.inOut(Easing.cubic),
+          })
+        : withTiming(0, {
+            duration: 200,
+            easing: Easing.inOut(Easing.cubic),
+          }),
     }
   })
 
@@ -88,53 +98,88 @@ const EditView: FC<EditViewProps> = ({
               <View className="mb-3 flex flex-row flex-wrap gap-3">
                 {tags?.tags.map((tag, index) => {
                   return (
-                    <Pressable
+                    <AnimatedPressable
                       key={tag.id}
-                      onPress={() => {
+                      layout={LinearTransition}
+                      entering={FadeIn.delay(index * 20)}
+                      className={cn(
+                        "flex h-10 flex-row items-center gap-x-2 rounded-full border px-3 py-2",
+                        tagInTagArray(tag.id, selectedTags || [])
+                          ? "border-greenColor/50 bg-greenColor/5"
+                          : "border-muted"
+                      )}
+                      onPress={async () => {
                         if (tagInTagArray(tag.id, selectedTags || [])) {
                           setSelectedTags(
                             removeTagFromArray(tag.id, selectedTags || [])
                           )
+
+                          const newPiece: UpdatePieceParams = {
+                            id: props.id!,
+                            tags: JSON.stringify(
+                              removeTagFromArray(tag.id, selectedTags || [])
+                            ),
+                            archived: props.archived!,
+                            filePath: props.filePath,
+                            aspect_ratio: props.aspect_ratio!,
+                            collections: props.collections,
+                            favorited: props.favorited,
+                          }
+
+                          await updatePiece(props.id!, newPiece)
+                          mutate("pieces")
                         } else {
                           setSelectedTags([...(selectedTags || []), tag])
+
+                          const newPiece: UpdatePieceParams = {
+                            id: props.id!,
+                            tags: JSON.stringify([
+                              ...(selectedTags || []),
+                              tag,
+                            ]),
+                            archived: props.archived!,
+                            filePath: props.filePath,
+                            aspect_ratio: props.aspect_ratio!,
+                            collections: props.collections,
+                            favorited: props.favorited,
+                          }
+
+                          await updatePiece(props.id!, newPiece)
+                          mutate("pieces")
                         }
                       }}
                     >
-                      <Animated.View
-                        layout={LinearTransition}
-                        entering={FadeIn.delay(index * 20)}
+                      <Text
                         className={cn(
-                          "flex flex-row items-center gap-x-2 rounded-full border px-3 py-2",
+                          "text-sm",
                           tagInTagArray(tag.id, selectedTags || [])
-                            ? "border-greenColor/50 bg-greenColor/5"
-                            : "border-muted"
+                            ? "text-greenColor"
+                            : "text-accent"
                         )}
                       >
-                        <Text
-                          className={cn(
-                            tagInTagArray(tag.id, selectedTags || [])
-                              ? "text-greenColor"
-                              : "text-accent"
-                          )}
+                        {tag.title}
+                      </Text>
+                      {tagInTagArray(tag.id, selectedTags || []) && (
+                        <Animated.View
+                          entering={FadeIn}
+                          layout={LinearTransition}
+                          exiting={FadeOut}
+                          className="rounded-full border border-greenColor/50 bg-greenColor/10 p-1"
                         >
-                          {tag.title}
-                        </Text>
-                        <AnimatePresence>
-                          {tagInTagArray(tag.id, selectedTags || []) && (
-                            <MotiView className="rounded-full border border-greenColor/50 bg-greenColor/10 p-1">
-                              <CheckIcon color="#00CB48" size={10} />
-                            </MotiView>
-                          )}
-                        </AnimatePresence>
-                      </Animated.View>
-                    </Pressable>
+                          <CheckIcon color="#00CB48" size={8} />
+                        </Animated.View>
+                      )}
+                    </AnimatedPressable>
                   )
                 })}
               </View>
             </ScrollView>
           </Animated.View>
         ) : (
-          <Animated.View style={SheetContainerStyle} className="gap-y-4">
+          <Animated.View
+            style={SheetContainerStyle}
+            className="gap-y-4 bg-white"
+          >
             <SheetMenuItem
               title="Edit Tags"
               icon={<TagsIcon color="#494849" size={18} />}

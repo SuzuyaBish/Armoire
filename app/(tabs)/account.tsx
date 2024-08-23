@@ -1,13 +1,15 @@
 import { ParentView, Text } from "@/components/StyledComponents"
 import { windowWidth } from "@/constants/window"
-import { deleteCollection } from "@/lib/api/collections/mutations"
 import { getAllCollectionsWithFirstPiece } from "@/lib/api/collections/queries"
 import { getOrderedPieces } from "@/lib/api/pieces/queries"
 import { Image } from "expo-image"
 import { SettingsIcon } from "lucide-react-native"
 import React from "react"
 import { Pressable, ScrollView, TouchableOpacity, View } from "react-native"
+import Animated, { FadeIn, LinearTransition } from "react-native-reanimated"
 import useSWR from "swr"
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 export default function AccountScreen() {
   const { data, isLoading, mutate } = useSWR(
@@ -26,19 +28,21 @@ export default function AccountScreen() {
         <View>
           <SettingsIcon size={24} color="transparent" />
         </View>
-        <Pressable className="rounded-xl bg-cosmosMuted px-12 py-4">
-          <Text>Search Collections</Text>
+        <Pressable className="rounded-full border border-muted/10 bg-muted px-12 py-4">
+          <Text family="lfeSemiBold">Search Collections</Text>
         </Pressable>
         <TouchableOpacity>
-          <SettingsIcon size={24} color="white" />
+          <SettingsIcon size={24} color="#242424" />
         </TouchableOpacity>
       </View>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="flex flex-row flex-wrap justify-between">
           <View className="mb-5 flex flex-col">
             {allData && allData.pieces.length > 0 ? (
-              <View
-                className="flex flex-row items-center justify-between"
+              <Animated.View
+                layout={LinearTransition}
+                entering={FadeIn.delay(100)}
+                className="flex flex-row items-center justify-between overflow-hidden rounded-2xl"
                 style={{
                   width: dimension,
                   aspectRatio: 1,
@@ -80,10 +84,10 @@ export default function AccountScreen() {
                     )}
                   </View>
                 )}
-              </View>
+              </Animated.View>
             ) : (
               <View
-                className="bg-cosmosMuted"
+                className="rounded-2xl bg-muted"
                 style={{
                   width: dimension,
                   aspectRatio: 1,
@@ -91,8 +95,8 @@ export default function AccountScreen() {
               />
             )}
             <View className="mt-2">
-              <Text className="text-sm">All Elements</Text>
-              <Text className="text-sm text-cosmosMutedText">
+              <Text family="lfeSemiBold">All Elements</Text>
+              <Text className="text-sm text-mutedForeground">
                 {allData?.pieces.length}{" "}
                 {allData?.pieces.length! > 1 ? "photos" : "photo"}
               </Text>
@@ -100,14 +104,11 @@ export default function AccountScreen() {
           </View>
           {!isLoading && data && data.allData && data.allData.length > 0 && (
             <>
-              {data.allData.map((collection) => {
+              {data.allData.map((collection, index) => {
                 return (
-                  <TouchableOpacity
-                    onPress={async () => {
-                      await deleteCollection(collection.id)
-                      mutate()
-                      allMutate()
-                    }}
+                  <AnimatedPressable
+                    layout={LinearTransition}
+                    entering={FadeIn.delay(100 * (index + 1))}
                     key={collection.id}
                     className="mb-5"
                   >
@@ -120,7 +121,7 @@ export default function AccountScreen() {
                         }}
                       />
                     ) : (
-                      <>
+                      <View className="overflow-hidden rounded-2xl">
                         {collection.piecesData.length > 0 ? (
                           <Image
                             source={{ uri: collection.piecesData[0].filePath }}
@@ -131,22 +132,22 @@ export default function AccountScreen() {
                           />
                         ) : (
                           <View
-                            className="bg-cosmosMuted"
+                            className="bg-muted"
                             style={{
                               width: dimension,
                               aspectRatio: 1,
                             }}
                           />
                         )}
-                      </>
+                      </View>
                     )}
                     <View className="mt-2">
-                      <Text className="text-sm">{collection.title}</Text>
-                      <Text className="text-sm text-cosmosMutedText">
+                      <Text family="lfeSemiBold">{collection.title}</Text>
+                      <Text className="text-sm text-mutedForeground">
                         {collection.piecesData.length} photos
                       </Text>
                     </View>
-                  </TouchableOpacity>
+                  </AnimatedPressable>
                 )
               })}
             </>

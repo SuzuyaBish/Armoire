@@ -8,7 +8,11 @@ export const getPieces = async () => {
 }
 
 export const getOrderedPieces = async () => {
-  const rows = await db.select().from(pieces).orderBy(desc(pieces.createdAt))
+  const rows = await db
+    .select()
+    .from(pieces)
+    .where(ne(pieces.archived, true))
+    .orderBy(desc(pieces.createdAt))
 
   return { pieces: rows }
 }
