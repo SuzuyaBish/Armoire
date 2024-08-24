@@ -2,8 +2,8 @@ import FABOverlay from "@/components/FABOverlay"
 import { ParentView, Text } from "@/components/StyledComponents"
 import { windowWidth } from "@/constants/window"
 import { getAllCollectionsWithFirstPiece } from "@/lib/api/collections/queries"
-import { getOrderedPieces } from "@/lib/api/pieces/queries"
 import { Image } from "expo-image"
+import { useRouter } from "expo-router"
 import { SettingsIcon } from "lucide-react-native"
 import React from "react"
 import { Pressable, ScrollView, TouchableOpacity, View } from "react-native"
@@ -13,13 +13,11 @@ import useSWR from "swr"
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 export default function AccountScreen() {
-  const { data, isLoading, mutate } = useSWR(
+  const router = useRouter()
+
+  const { data, isLoading } = useSWR(
     "collections",
     getAllCollectionsWithFirstPiece
-  )
-  const { data: allData, mutate: allMutate } = useSWR(
-    "pieces",
-    getOrderedPieces
   )
 
   const dimension = windowWidth / 2 - 24
@@ -39,71 +37,6 @@ export default function AccountScreen() {
       </View>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="flex flex-row flex-wrap justify-between">
-          <View className="mb-5 flex flex-col">
-            {allData && allData.pieces.length > 0 ? (
-              <Animated.View
-                layout={LinearTransition}
-                entering={FadeIn.delay(100)}
-                className="flex flex-row items-center justify-between overflow-hidden rounded-2xl"
-                style={{
-                  width: dimension,
-                  aspectRatio: 1,
-                }}
-              >
-                <Image
-                  source={{ uri: allData?.pieces[0].filePath }}
-                  contentFit="cover"
-                  style={{
-                    width: allData.pieces.length > 1 ? "50%" : "100%",
-                    height: "100%",
-                  }}
-                />
-                {allData?.pieces.length > 1 && (
-                  <View
-                    className="flex flex-col"
-                    style={{
-                      width: "50%",
-                      height: "100%",
-                    }}
-                  >
-                    <Image
-                      source={{ uri: allData?.pieces[1].filePath }}
-                      contentFit="cover"
-                      style={{
-                        width: "100%",
-                        height: allData?.pieces?.length > 2 ? "50%" : "100%",
-                      }}
-                    />
-                    {allData.pieces.length > 2 && (
-                      <Image
-                        source={{ uri: allData?.pieces[2].filePath }}
-                        contentFit="cover"
-                        style={{
-                          width: "100%",
-                          height: "50%",
-                        }}
-                      />
-                    )}
-                  </View>
-                )}
-              </Animated.View>
-            ) : (
-              <View
-                className="rounded-2xl bg-muted"
-                style={{
-                  width: dimension,
-                  aspectRatio: 1,
-                }}
-              />
-            )}
-            <View className="mt-2">
-              <Text family="lfeSemiBold">All Elements</Text>
-              <Text className="text-sm text-mutedForeground">
-                {allData?.pieces.length}{" "}
-                {allData?.pieces.length! > 1 ? "photos" : "photo"}
-              </Text>
-            </View>
-          </View>
           {!isLoading && data && data.allData && data.allData.length > 0 && (
             <>
               {data.allData.map((collection, index) => {
@@ -113,6 +46,12 @@ export default function AccountScreen() {
                     entering={FadeIn.delay(100 * (index + 1))}
                     key={collection.id}
                     className="mb-5"
+                    onPress={() =>
+                      router.push({
+                        pathname: "/(tabs)/(collections)/collection-viewer",
+                        params: { id: collection.id },
+                      })
+                    }
                   >
                     {collection.coverImage ? (
                       <Image

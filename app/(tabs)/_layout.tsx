@@ -32,7 +32,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="account"
+        name="(collections)"
         options={{
           title: "Tab Two",
           tabBarIcon: ({ color }) => <BedSingleIcon color={color} />,
