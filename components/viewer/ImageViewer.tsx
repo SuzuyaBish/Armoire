@@ -7,7 +7,6 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet"
-import MasonryList from "@react-native-seoul/masonry-list"
 import { NotificationFeedbackType, notificationAsync } from "expo-haptics"
 import { useRouter } from "expo-router"
 import { Edit2Icon, PlusIcon } from "lucide-react-native"
@@ -25,6 +24,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import useSWR, { useSWRConfig } from "swr"
 import AddToCollectionView from "../AddToCollectionView"
 import AlertDialog from "../AlertDialog"
+import ImageList from "../ImageList"
 import SheetHeader from "../SheetHeader"
 import EditView from "./EditView"
 
@@ -158,12 +158,11 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
             />
           )
         }}
-        backgroundStyle={{ backgroundColor: "#FFFFFE" }}
+        backgroundStyle={{
+          backgroundColor: "#FFFFFE",
+        }}
       >
-        <BottomSheetView
-          className="px-8 pb-5"
-          style={{ paddingBottom: insets.bottom }}
-        >
+        <BottomSheetView className="px-8" style={{ flex: 1, flexGrow: 1 }}>
           <AddToCollectionView
             selectedPiece={data}
             close={() => bottomsheetRef.current?.dismiss()}
@@ -258,48 +257,15 @@ const ImageViewer: FC<ImageViewerProps> = ({ data, id }) => {
             marginBottom: windowHeight - insets.bottom - insets.top - 70,
           }}
         ></View>
-        {otherData.data && otherData.data?.pieces.length > 0 && (
-          <View className="z-40 flex flex-col bg-transparent">
-            <MasonryList
-              data={otherData.data.pieces}
-              keyExtractor={(item): string => item.id}
-              containerStyle={{
-                marginBottom: insets.bottom,
-                paddingHorizontal: 10,
-              }}
-              numColumns={2}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item, i }) => {
-                const piece: Piece = item as Piece
-                return (
-                  <Pressable
-                    onPress={() =>
-                      router.push({
-                        pathname: "/viewer",
-                        params: { id: piece.id },
-                      })
-                    }
-                    style={{
-                      width: "100%",
-                      padding: 8,
-                      aspectRatio: piece.aspect_ratio!,
-                      position: "relative",
-                    }}
-                  >
-                    <Animated.Image
-                      source={{ uri: piece.filePath }}
-                      entering={FadeIn.delay(i * 100)}
-                      style={{
-                        height: "100%",
-                        width: "100%",
-                      }}
-                    />
-                  </Pressable>
-                )
-              }}
+        <View className="px-2">
+          {otherData.data && (
+            <ImageList
+              pieces={otherData.data.pieces}
+              isLoading={otherData.isLoading}
+              type="Clothes"
             />
-          </View>
-        )}
+          )}
+        </View>
       </Animated.ScrollView>
     </View>
   )

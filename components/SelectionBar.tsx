@@ -111,10 +111,7 @@ export default function SelectionBar() {
         }}
         backgroundStyle={{ backgroundColor: "#FFFFFE" }}
       >
-        <BottomSheetView
-          className="px-8 pb-5"
-          style={{ paddingBottom: insets.bottom }}
-        >
+        <BottomSheetView className="flex-1 flex-grow px-8 pb-5">
           <AddToCollectionMultiView
             close={() => collectionRef.current?.dismiss()}
           />

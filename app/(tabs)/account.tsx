@@ -1,3 +1,4 @@
+import FABOverlay from "@/components/FABOverlay"
 import { ParentView, Text } from "@/components/StyledComponents"
 import { windowWidth } from "@/constants/window"
 import { getAllCollectionsWithFirstPiece } from "@/lib/api/collections/queries"
@@ -24,6 +25,7 @@ export default function AccountScreen() {
   const dimension = windowWidth / 2 - 24
   return (
     <ParentView hasInsets hasPadding className="relative px-4">
+      <FABOverlay />
       <View className="mb-6 mt-3 flex flex-row items-center justify-between">
         <View>
           <SettingsIcon size={24} color="transparent" />

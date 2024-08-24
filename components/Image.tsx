@@ -248,10 +248,7 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
         }}
         backgroundStyle={{ backgroundColor: "#FFFFFE" }}
       >
-        <BottomSheetView
-          className="px-8 pb-5"
-          style={{ paddingBottom: insets.bottom }}
-        >
+        <BottomSheetView className="flex-1 flex-grow px-8 pb-5">
           <AddToCollectionView
             selectedPiece={piece}
             close={() => collectionRef.current?.dismiss()}

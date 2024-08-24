@@ -7,7 +7,6 @@ import { Image } from "expo-image"
 import { PlusCircleIcon, PlusIcon } from "lucide-react-native"
 import { FC } from "react"
 import { ScrollView, TouchableOpacity, View } from "react-native"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
 import useSWR, { useSWRConfig } from "swr"
 import CollectionCreator from "./CollectionCreator"
 import SheetHeader from "./SheetHeader"
@@ -20,7 +19,6 @@ interface AddToCollectionMultiViewProps {
 const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
   close,
 }) => {
-  const insets = useSafeAreaInsets()
   const { mutate } = useSWRConfig()
   const homeStore = useHomeStore()
 
@@ -30,11 +28,7 @@ const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
     mutate: collectionsMutate,
   } = useSWR("collections", getAllCollectionsWithFirstPiece)
   return (
-    <View
-      style={{
-        marginBottom: insets.bottom,
-      }}
-    >
+    <View className="flex-1">
       <SheetHeader
         title="Add to Collection"
         close={close}
@@ -48,9 +42,9 @@ const AddToCollectionMultiView: FC<AddToCollectionMultiViewProps> = ({
           />
         }
       />
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {!isLoading && data && data.allData && data.allData.length > 0 ? (
-          <View className="gap-y-5">
+          <View className="gap-y-5 pb-20">
             {data.allData.map((collection) => {
               return (
                 <TouchableOpacity

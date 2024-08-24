@@ -29,7 +29,7 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
     mutate: collectionsMutate,
   } = useSWR("collections", getAllCollectionsWithFirstPiece)
   return (
-    <View>
+    <View className="flex-1">
       <SheetHeader
         title="Add to Collection"
         close={close}
@@ -43,9 +43,9 @@ const AddToCollectionView: FC<AddToCollectionViewProps> = ({
           />
         }
       />
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {!isLoading && data && data.allData && data.allData.length > 0 ? (
-          <View className="gap-y-5">
+          <View className="gap-y-5 pb-20">
             {data.allData.map((collection) => {
               return (
                 <TouchableOpacity
