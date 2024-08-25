@@ -29,7 +29,7 @@ export default function AccountScreen() {
   return (
     <ParentView hasInsets hasPadding className="relative px-4">
       <FABOverlay />
-      <View className="mb-6 mt-3 flex flex-row items-center justify-between">
+      <View className="mt-3 flex flex-row items-center justify-between pb-6">
         <View>
           <SettingsIcon size={24} color="transparent" />
         </View>
@@ -99,7 +99,7 @@ export default function AccountScreen() {
                       className="mb-5"
                       onPress={() =>
                         router.push({
-                          pathname: "/(tabs)/(collections)/collection-viewer",
+                          pathname: "/collection-viewer",
                           params: { id: collection.id },
                         })
                       }

@@ -11,7 +11,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: "#242424",
         tabBarInactiveTintColor: "#BEBEC2",
         tabBarStyle: {
-          height: 90,
+          height: 80,
           backgroundColor: "#FFFFFE",
           borderTopColor: "#BEBEC2",
         },
@@ -32,7 +32,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="(collections)"
+        name="account"
         options={{
           title: "Tab Two",
           tabBarIcon: ({ color }) => <BedSingleIcon color={color} />,

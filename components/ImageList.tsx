@@ -11,15 +11,22 @@ interface ImageListProps {
   pieces: Piece[]
   isLoading: boolean
   type: "Clothes" | "Favorites" | "Archives"
+  scrollable?: boolean
 }
 
-const ImageList: FC<ImageListProps> = ({ pieces, isLoading, type }) => {
+const ImageList: FC<ImageListProps> = ({
+  pieces,
+  isLoading,
+  type,
+  scrollable = true,
+}) => {
   if (!isLoading) {
     if (pieces.length > 0) {
       return (
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="flex-1 overflow-visible"
+          scrollEnabled={scrollable}
         >
           <Animated.View className="flex flex-row flex-wrap justify-between">
             {pieces.map((piece, i) => {

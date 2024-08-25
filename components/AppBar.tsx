@@ -15,6 +15,7 @@ type AppBarWithoutChildren = {
   title: string
   inverted?: boolean
   hasBackButton?: boolean
+  showTitle?: boolean
   action?: React.ReactNode
   actionOnPress?: () => void
 }
@@ -47,12 +48,14 @@ const AppBar: FC<AppBarProps> = ({ ...props }) => {
             className="flex items-center justify-center"
             style={{ width: "60%" }}
           >
-            <Text
-              family="lfeMedium"
-              className={cn("text-xl", props.inverted && "text-white")}
-            >
-              {props.title}
-            </Text>
+            {props.showTitle && (
+              <Text
+                family="lfeMedium"
+                className={cn("text-xl", props.inverted && "text-white")}
+              >
+                {props.title}
+              </Text>
+            )}
           </View>
           {props.action ? (
             <Pressable

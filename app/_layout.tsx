@@ -91,6 +91,7 @@ function RootLayoutNav() {
           >
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="viewer" />
+            <Stack.Screen name="collection-viewer" />
           </Stack>
           {homeStore.isInArchive ||
           homeStore.isSelecting ||
