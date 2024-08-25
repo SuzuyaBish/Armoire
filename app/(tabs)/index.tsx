@@ -117,16 +117,17 @@ export default function TabOneScreen() {
           flex: 1,
         }}
       >
-        {data && (
-          <ImageList
-            key="1"
-            pieces={data?.pieces}
-            isLoading={isLoading}
-            type="Clothes"
-          />
-        )}
+        <View key="1">
+          {data && data.pieces && (
+            <ImageList
+              pieces={data?.pieces}
+              isLoading={isLoading}
+              type="Clothes"
+            />
+          )}
+        </View>
         <View key="2">
-          {data && (
+          {data && data.pieces && (
             <ImageList
               key="2"
               pieces={data?.pieces.filter((v) => v.favorited)}
