@@ -39,9 +39,16 @@ interface ImageProps {
   piece: Piece
   index: number
   length: number
+  shouldRoute?: boolean
+  onPress?: () => void
 }
 
-const Image: FC<ImageProps> = ({ piece, index }) => {
+const Image: FC<ImageProps> = ({
+  piece,
+  index,
+  shouldRoute = true,
+  onPress,
+}) => {
   const toast = useToast()
   const router = useRouter()
   const insets = useSafeAreaInsets()
@@ -65,10 +72,16 @@ const Image: FC<ImageProps> = ({ piece, index }) => {
             homeStore.setSelectedPieces([...homeStore.selectedPieces, piece])
           }
         } else {
-          router.push({
-            pathname: "/viewer",
-            params: { id: piece.id },
-          })
+          if (shouldRoute) {
+            router.push({
+              pathname: "/viewer",
+              params: { id: piece.id },
+            })
+          } else {
+            if (onPress) {
+              onPress()
+            }
+          }
         }
       }}
       onLongPress={() => {

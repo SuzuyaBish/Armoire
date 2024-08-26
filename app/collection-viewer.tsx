@@ -1,8 +1,14 @@
 import AnimatedPressable from "@/components/AnimatedPressable"
 import AppBar from "@/components/AppBar"
 import ImageList from "@/components/ImageList"
+import SelectableImageList from "@/components/SelectableImageList"
 import { ParentView, Text } from "@/components/StyledComponents"
 import { getCollectionWithPieces } from "@/lib/api/collections/queries"
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet"
 import { Image } from "expo-image"
 import { useLocalSearchParams } from "expo-router"
 import { Edit3Icon, PlusIcon } from "lucide-react-native"
@@ -20,6 +26,7 @@ export default function CollectionViewer() {
   const { id } = useLocalSearchParams() as CollectionViewerProps
   const fetcher = async () => getCollectionWithPieces(id)
   const { data, isLoading } = useSWR(`collection-${id}`, fetcher)
+  const bottomSheetRef = React.useRef<BottomSheetModal>(null)
   return (
     <ParentView hasInsets hasPadding className="flex-1">
       {data && data.collection && (
@@ -51,7 +58,10 @@ export default function CollectionViewer() {
                 {data.piecesData.length} pieces
               </Text>
               <View className="mt-5 flex flex-row gap-x-5">
-                <AnimatedPressable modest>
+                <AnimatedPressable
+                  modest
+                  onPress={() => bottomSheetRef.current?.present()}
+                >
                   <View className="flex size-14 items-center justify-center rounded-full bg-muted">
                     <PlusIcon size={18} color="black" />
                   </View>
@@ -77,6 +87,34 @@ export default function CollectionViewer() {
           </ScrollView>
         </View>
       )}
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        topInset={insets.top}
+        snapPoints={["100%"]}
+        style={{
+          borderRadius: 30,
+        }}
+        backdropComponent={(e) => {
+          return (
+            <BottomSheetBackdrop
+              onPress={() => bottomSheetRef.current?.dismiss()}
+              appearsOnIndex={0}
+              disappearsOnIndex={-1}
+              style={[e.style, { backgroundColor: "rgba(0,0,0,0.7)" }]}
+              animatedIndex={e.animatedIndex}
+              animatedPosition={e.animatedPosition}
+            />
+          )
+        }}
+        backgroundStyle={{ backgroundColor: "#FFFFFE" }}
+      >
+        <BottomSheetScrollView className="flex-1 flex-grow pb-5">
+          <SelectableImageList
+            collectionId={id}
+            close={() => bottomSheetRef.current?.dismiss()}
+          />
+        </BottomSheetScrollView>
+      </BottomSheetModal>
     </ParentView>
   )
 }

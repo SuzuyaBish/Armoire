@@ -78,7 +78,7 @@ export default function AccountScreen() {
       </View>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="flex flex-row flex-wrap justify-between">
-          {!isLoading && data && data.allData && data.allData.length > 0 && (
+          {data && data.allData && data.allData.length > 0 && (
             <>
               {data.allData
                 .filter((v) => {

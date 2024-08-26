@@ -1,5 +1,10 @@
 import { db } from "@/lib/db/index"
-import { pieceIdSchema, pieces, type PieceId } from "@/lib/db/schema/pieces"
+import {
+  Piece,
+  pieceIdSchema,
+  pieces,
+  type PieceId,
+} from "@/lib/db/schema/pieces"
 import { desc, eq, ne } from "drizzle-orm"
 
 export const getPieces = async () => {
@@ -74,4 +79,19 @@ export const getFirst3OrderedPieces = async () => {
     .orderBy(desc(pieces.createdAt))
     .limit(3)
   return { pieces: rows }
+}
+
+export const getPiecesNotInCollection = async (collectionId: string) => {
+  const rows = await db.select().from(pieces)
+
+  let goodPieces: Piece[] = []
+
+  for (const piece of rows) {
+    const collections = JSON.parse(piece.collections)
+    if (!collections.includes(collectionId)) {
+      goodPieces.push(piece)
+    }
+  }
+
+  return { pieces: goodPieces }
 }

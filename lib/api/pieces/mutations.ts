@@ -1,4 +1,5 @@
 import { db } from "@/lib/db/index"
+import { collections } from "@/lib/db/schema/collections"
 import {
   NewPieceParams,
   Piece,
@@ -9,6 +10,7 @@ import {
   pieces,
   updatePieceSchema,
 } from "@/lib/db/schema/pieces"
+import { tags } from "@/lib/db/schema/tags"
 import { eq } from "drizzle-orm"
 import { copyAsync, deleteAsync } from "expo-file-system"
 import { mutate } from "swr"
@@ -98,6 +100,18 @@ export const multiUnarchivePiece = async (pieces: Piece[]) => {
     mutate("collections")
     mutate("archived")
 
+    return { pieces: [] }
+  } catch (err) {
+    const message = (err as Error).message ?? "Error, please try again"
+    console.error(message)
+    throw { error: message }
+  }
+}
+
+export const clearAllData = async () => {
+  try {
+    await db.delete(tags).execute()
+    await db.delete(collections).execute()
     return { pieces: [] }
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again"
