@@ -142,6 +142,13 @@ export const generateDialogText = (type: DialogTypes) => {
     }
   }
 
+  if (type === "deleteCollection") {
+    return {
+      title: "Delete Collection",
+      body: "Deleting this collection cannot be undone.",
+    }
+  }
+
   return {
     title: "Delete Photo",
     body: "Deleting the photo cannot be undone. Make sure you have it saved to your gallery before deleting.",

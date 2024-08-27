@@ -1,1 +1,1 @@
-export type DialogTypes = "delete" | "deleteMultiple"
+export type DialogTypes = "delete" | "deleteMultiple" | "deleteCollection"

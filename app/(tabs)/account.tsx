@@ -76,78 +76,85 @@ export default function AccountScreen() {
           )}
         </AnimatePresence>
       </View>
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="flex flex-row flex-wrap justify-between">
-          {data && data.allData && data.allData.length > 0 && (
-            <>
-              {data.allData
-                .filter((v) => {
-                  if (searchTerm === "") {
-                    return v
-                  } else if (
-                    v.title.toLowerCase().includes(searchTerm.toLowerCase())
-                  ) {
-                    return v
-                  }
-                })
-                .map((collection, index) => {
-                  return (
-                    <AnimatedPressable
-                      layout={LinearTransition}
-                      entering={FadeIn.delay(100 * (index + 1))}
-                      key={collection.id}
-                      className="mb-5"
-                      onPress={() =>
-                        router.push({
-                          pathname: "/collection-viewer",
-                          params: { id: collection.id },
-                        })
-                      }
-                    >
-                      {collection.coverImage ? (
-                        <Image
-                          source={{ uri: collection.coverImage }}
-                          style={{
-                            width: dimension,
-                            aspectRatio: 1,
-                          }}
-                        />
-                      ) : (
-                        <View className="overflow-hidden rounded-2xl">
-                          {collection.piecesData.length > 0 ? (
-                            <Image
-                              source={{
-                                uri: collection.piecesData[0].filePath,
-                              }}
-                              style={{
-                                width: dimension,
-                                aspectRatio: 1,
-                              }}
-                            />
-                          ) : (
-                            <View
-                              className="bg-muted"
-                              style={{
-                                width: dimension,
-                                aspectRatio: 1,
-                              }}
-                            />
-                          )}
-                        </View>
-                      )}
-                      <View className="mt-2">
-                        <Text family="lfeSemiBold">{collection.title}</Text>
-                        <Text className="text-sm text-mutedForeground">
-                          {collection.piecesData.length} photos
-                        </Text>
+      {data && data.allData && data.allData.length > 0 ? (
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <View className="flex flex-row flex-wrap justify-between">
+            {data.allData
+              .filter((v) => {
+                if (searchTerm === "") {
+                  return v
+                } else if (
+                  v.title.toLowerCase().includes(searchTerm.toLowerCase())
+                ) {
+                  return v
+                }
+              })
+              .map((collection, index) => {
+                return (
+                  <AnimatedPressable
+                    layout={LinearTransition}
+                    entering={FadeIn.delay(100 * (index + 1))}
+                    key={collection.id}
+                    className="mb-5"
+                    onPress={() =>
+                      router.push({
+                        pathname: "/collection-viewer",
+                        params: { id: collection.id },
+                      })
+                    }
+                  >
+                    {collection.coverImage ? (
+                      <Image
+                        source={{ uri: collection.coverImage }}
+                        style={{
+                          width: dimension,
+                          aspectRatio: 1,
+                        }}
+                      />
+                    ) : (
+                      <View className="overflow-hidden rounded-2xl">
+                        {collection.piecesData.length > 0 ? (
+                          <Image
+                            source={{
+                              uri: collection.piecesData[0].filePath,
+                            }}
+                            style={{
+                              width: dimension,
+                              aspectRatio: 1,
+                            }}
+                          />
+                        ) : (
+                          <View
+                            className="bg-muted"
+                            style={{
+                              width: dimension,
+                              aspectRatio: 1,
+                            }}
+                          />
+                        )}
                       </View>
-                    </AnimatedPressable>
-                  )
-                })}
-            </>
-          )}
+                    )}
+                    <View className="mt-2">
+                      <Text family="lfeSemiBold">{collection.title}</Text>
+                      <Text className="text-sm text-mutedForeground">
+                        {collection.piecesData.length} photos
+                      </Text>
+                    </View>
+                  </AnimatedPressable>
+                )
+              })}
+          </View>
+        </ScrollView>
+      ) : (
+        <View className="flex-1 items-center justify-center gap-y-2">
+          <Text family="lfeBold" className="text-2xl">
+            No collections yet
+          </Text>
+          <Text className="text-mutedForeground">
+            Create a collection to get started
+          </Text>
         </View>
-      </ScrollView>
+      )}
     </ParentView>
   )
 }
